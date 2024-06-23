@@ -22,12 +22,10 @@ namespace Application.Attachments
     {
         private readonly Application.UnitOfWorks.IUnitOfWork _unitOfWork;
         private readonly ICustomLogAppService _customLogAppService;
-        private readonly IAbpSession _abpSession;
-        public AttachmentAppService(ICustomLogAppService customLogAppService, Application.UnitOfWorks.IUnitOfWork unitOfWork, IAbpSession abpSession)
+        public AttachmentAppService(ICustomLogAppService customLogAppService, Application.UnitOfWorks.IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
             _customLogAppService = customLogAppService;
-            _abpSession = abpSession;
         }
 
         public async Task<int> UploadAttachmentAsync(IFormFile file)

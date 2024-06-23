@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using TaskManagementSystem.Core.Permissions;
 using TaskManagementSystem.Web.Models;
 
 namespace TaskManagementSystem.Web.Controllers
 {
-    [Authorize]
+    [Authorize(Permission.ManageUsers)]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

@@ -1,4 +1,5 @@
 using Application.Attachments;
+using Application.CustomLogs;
 using Application.TaskComments;
 using Application.TaskSheets;
 using Application.Teams;
@@ -18,6 +19,12 @@ builder.Services.AddDbContext<TaskManagementSystemDbContext>(options =>
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<TaskManagementSystemDbContext>()
     .AddDefaultTokenProviders();
+
+// Register AutoMapper
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+// Add custom log service
+builder.Services.AddScoped<ICustomLogAppService, CustomLogAppService>();
 // Add services to the container.
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
