@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using TaskManagementSystem.Authorization.Roles;
 using TaskManagementSystem.Core;
 using TaskManagementSystem.Core.Entities;
 using TaskManagementSystem.Web.Models;
@@ -29,6 +30,7 @@ public class AccountController : Controller
         {
             var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
             var result = await _userManager.CreateAsync(user, model.Password);
+            await _userManager.AddToRoleAsync(user, StaticRoleNames.Host.RegularUsers);
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, isPersistent: false);

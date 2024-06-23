@@ -6,7 +6,7 @@ using TaskManagementSystem.Web.Models;
 
 namespace TaskManagementSystem.Web.Controllers
 {
-    [Authorize(Permission.ManageUsers)]
+    //[Authorize(Permission.ManageUsers)]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

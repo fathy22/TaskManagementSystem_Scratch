@@ -4,6 +4,7 @@ using System;
 using System.Reflection;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using TaskManagementSystem.Authorization.Roles;
 using TaskManagementSystem.Core.Entities;
 using TaskManagementSystem.Core.Permissions;
 
@@ -17,11 +18,23 @@ namespace TaskManagementSystem.Application.Roles
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
             // Ensure Admin Role exists
-            var adminRole = await roleManager.FindByNameAsync("Admin");
+            var adminRole = await roleManager.FindByNameAsync(StaticRoleNames.Host.Admin);
+            var teamLeadRole = await roleManager.FindByNameAsync(StaticRoleNames.Host.TeamLeads);
+            var regularUserRole = await roleManager.FindByNameAsync(StaticRoleNames.Host.RegularUsers);
             if (adminRole == null)
             {
-                adminRole = new IdentityRole("Admin");
+                adminRole = new IdentityRole(StaticRoleNames.Host.Admin);
                 await roleManager.CreateAsync(adminRole);
+            }
+            if (teamLeadRole == null)
+            {
+                teamLeadRole = new IdentityRole(StaticRoleNames.Host.TeamLeads);
+                await roleManager.CreateAsync(teamLeadRole);
+            }
+            if (regularUserRole == null)
+            {
+                regularUserRole = new IdentityRole(StaticRoleNames.Host.RegularUsers);
+                await roleManager.CreateAsync(regularUserRole);
             }
 
             // Get all current permissions for the Admin role
@@ -56,8 +69,8 @@ namespace TaskManagementSystem.Application.Roles
             {
                 var defaultUser = new ApplicationUser
                 {
-                    FirstName = "admin",
-                    SecondName = "admin",
+                    FirstName = StaticRoleNames.Host.Admin,
+                    SecondName = StaticRoleNames.Host.Admin,
                     UserName = "admin@admin.com",
                     Email = "admin@admin.com",
                     EmailConfirmed = true
@@ -66,7 +79,7 @@ namespace TaskManagementSystem.Application.Roles
                 var createResult = await userManager.CreateAsync(defaultUser, "User@123");
                 if (createResult.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(defaultUser, "Admin");
+                    await userManager.AddToRoleAsync(defaultUser, StaticRoleNames.Host.Admin);
                 }
             }
         }
