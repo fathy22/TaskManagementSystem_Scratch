@@ -11,12 +11,12 @@ using TaskManagementSystem.TaskSheets.Dto;
 
 namespace Application.TaskSheets
 {
-    public class TaskSheetService : ITaskSheetAppService
+    public class TaskSheetAppService : ITaskSheetAppService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public TaskSheetService(IUnitOfWork unitOfWork, IMapper mapper)
+        public TaskSheetAppService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;

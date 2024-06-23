@@ -1,7 +1,13 @@
+using Application.Attachments;
+using Application.TaskComments;
+using Application.TaskSheets;
+using Application.Teams;
+using Application.UnitOfWorks;
 using DbContexts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TaskManagementSystem.Core.Entities;
+using TaskManagementSystem.Core.Sessions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +18,16 @@ builder.Services.AddDbContext<TaskManagementSystemDbContext>(options =>
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<TaskManagementSystemDbContext>()
     .AddDefaultTokenProviders();
-
+// Add services to the container.
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSession();
+builder.Services.AddScoped<ICustomSession, CustomSession>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<ITeamAppService, TeamAppService>();
+builder.Services.AddScoped<IAttachmentAppService, AttachmentAppService>();
+builder.Services.AddScoped<ITaskSheetAppService, TaskSheetAppService>();
+builder.Services.AddScoped<ITaskCommentAppService, TaskCommentAppService>();
 builder.Services.Configure<IdentityOptions>(options =>
 {
     // Password settings

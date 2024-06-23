@@ -10,12 +10,12 @@ using TaskManagementSystem.CustomLogs.Dto;
 
 namespace Application.CustomLogs
 {
-    public class CustomLogService : ICustomLogAppService
+    public class CustomLogAppService : ICustomLogAppService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public CustomLogService(IUnitOfWork unitOfWork, IMapper mapper)
+        public CustomLogAppService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;

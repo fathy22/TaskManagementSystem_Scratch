@@ -10,12 +10,12 @@ using TaskManagementSystem.Teams.Dto;
 
 namespace Application.Teams
 {
-    public class TeamService : ITeamAppService
+    public class TeamAppService : ITeamAppService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public TeamService(IUnitOfWork unitOfWork, IMapper mapper)
+        public TeamAppService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;

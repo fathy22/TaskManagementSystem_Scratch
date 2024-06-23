@@ -12,12 +12,12 @@ using TaskManagementSystem.Tasks;
 
 namespace Application.TaskComments
 {
-    public class TaskCommentService : ITaskCommentAppService
+    public class TaskCommentAppService : ITaskCommentAppService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public TaskCommentService(IUnitOfWork unitOfWork, IMapper mapper)
+        public TaskCommentAppService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
