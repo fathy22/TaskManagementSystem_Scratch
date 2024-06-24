@@ -26,7 +26,7 @@ public class RolesController : Controller
         var viewModel = new CreateRoleViewModel
         {
             Permissions = _rolePermissionService.GetAllPermissionsAsync().Result
-                .Select(p => new PermissionViewModel { Value = p.Value })
+                .Select(p => new PermissionViewModel { Value = p })
                 .ToList()
         };
         return View(viewModel);
@@ -59,7 +59,7 @@ public class RolesController : Controller
         }
 
         viewModel.Permissions = _rolePermissionService.GetAllPermissionsAsync().Result
-            .Select(p => new PermissionViewModel { Value = p.Value })
+            .Select(p => new PermissionViewModel { Value = p })
             .ToList();
 
         return View(viewModel);
@@ -81,7 +81,7 @@ public class RolesController : Controller
                 .Select(p => p)
                 .ToList(),
             Permissions = _rolePermissionService.GetAllPermissionsAsync().Result
-                .Select(p => new PermissionViewModel { Value = p.Value })
+                .Select(p => new PermissionViewModel { Value = p })
                 .ToList()
         };
 
@@ -127,7 +127,7 @@ public class RolesController : Controller
         }
 
         viewModel.Permissions = _rolePermissionService.GetAllPermissionsAsync().Result
-            .Select(p => new PermissionViewModel { Value = p.Value })
+            .Select(p => new PermissionViewModel { Value = p })
             .ToList();
 
         return View(viewModel);

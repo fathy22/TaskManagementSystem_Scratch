@@ -49,7 +49,7 @@ namespace TaskManagementSystem.Application.Roles
             // Add new permissions to the Admin role
             foreach (var permission in permissionFields)
             {
-                if (!currentClaims.Any(c => c.Type == permission))
+                if (!currentClaims.Any(c => c.Value == permission))
                 {
                     await roleManager.AddClaimAsync(adminRole, new Claim("Permission",permission));
                 }
@@ -58,7 +58,7 @@ namespace TaskManagementSystem.Application.Roles
             // Remove permissions that are no longer defined in the Permission class
             foreach (var claim in currentClaims)
             {
-                if (!permissionFields.Contains(claim.Type))
+                if (!permissionFields.Contains(claim.Value))
                 {
                     await roleManager.RemoveClaimAsync(adminRole, claim);
                 }

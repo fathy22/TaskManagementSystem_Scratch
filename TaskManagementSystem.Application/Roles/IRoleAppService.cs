@@ -10,7 +10,7 @@ namespace Application.Roles
         Task<IdentityResult> UpdateRoleAsync(IdentityRole role);
         Task<IdentityResult> DeleteRoleAsync(string roleId);
 
-        Task<List<Claim>> GetAllPermissionsAsync();
+        Task<List<string>> GetAllPermissionsAsync();
         Task<IdentityResult> AddPermissionToRoleAsync(string roleId, string permission);
         Task<IdentityResult> RemovePermissionFromRoleAsync(string roleId, string permission);
         Task<IdentityResult> RemoveAllPermissionsByRoleAsync(string roleId);

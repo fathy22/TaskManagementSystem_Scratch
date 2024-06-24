@@ -17,5 +17,6 @@ namespace Application.Users
         Task<bool> DeleteUserAsync(string userId);
         Task<IEnumerable<IdentityRole>> GetAllRolesAsync();
         Task<IList<string>> GetUserRolesAsync(ApplicationUser user);
+        string GetAdminUserId();
     }
 }

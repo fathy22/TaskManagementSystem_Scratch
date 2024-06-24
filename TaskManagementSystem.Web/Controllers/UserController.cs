@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using TaskManagementSystem.Core.Entities;
 using TaskManagementSystem.Web.Models;
@@ -17,12 +18,21 @@ namespace YourNamespace.Controllers
             _userService = userService;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var users = await _userService.GetAllUsersAsync();
-            return View(users);
-        }
+            var users = _userService.GetAllUsersAsync().Result;
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var adminUserId = _userService.GetAdminUserId();
 
+            var viewModel = new UserListViewModel
+            {
+                Users = users,
+                CurrentUserId = currentUserId,
+                AdminUserId = adminUserId
+            };
+
+            return View(viewModel);
+        }
         public async Task<IActionResult> Create()
         {
             var roles = await _userService.GetAllRolesAsync();

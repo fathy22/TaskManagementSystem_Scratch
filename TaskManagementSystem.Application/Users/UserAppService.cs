@@ -78,5 +78,11 @@ namespace Application.Users
         {
             return await _userManager.GetRolesAsync(user);
         }
-}
+        public string GetAdminUserId()
+        {
+            var adminUser = _userManager.GetUsersInRoleAsync("Admin").Result.FirstOrDefault();
+            return adminUser?.Id;
+        }
+
+    }
 }

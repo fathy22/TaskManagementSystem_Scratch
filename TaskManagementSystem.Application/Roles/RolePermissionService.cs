@@ -3,9 +3,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using TaskManagementSystem.Core.Entities;
+using TaskManagementSystem.Core.Permissions;
+
 namespace Application.Roles
 {
     public class RolePermissionService : IRolePermissionService
@@ -47,10 +50,15 @@ namespace Application.Roles
             return await _roleManager.DeleteAsync(role);
         }
 
-        public async Task<List<Claim>> GetAllPermissionsAsync()
+        public async Task<List<string>> GetAllPermissionsAsync()
         {
-            var claims = await _roleManager.GetClaimsAsync(new IdentityRole());
-            return claims.ToList();
+            //var claims = await _roleManager.GetClaimsAsync(new IdentityRole());
+            //return claims.ToList();
+            var permissionFields = typeof(Permission).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+               .Where(fi => fi.IsLiteral && !fi.IsInitOnly && fi.FieldType == typeof(string))
+               .Select(fi => fi.GetRawConstantValue() as string)
+               .ToList();
+            return permissionFields;
         }
         public async Task<List<string>> GetAllPermissionsByRoleIdAsync(string roleId)
         {
