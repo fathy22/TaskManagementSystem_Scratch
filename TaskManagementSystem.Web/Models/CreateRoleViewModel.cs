@@ -5,7 +5,11 @@ namespace TaskManagementSystem.Web.Models
 {
     public class CreateRoleViewModel
     {
-        public string RoleName { get; set; }
-        public List<PermissionViewModel> Permissions { get; set; }=new List<PermissionViewModel>();
+        [Required(ErrorMessage = "Role name is required.")]
+        public string Name { get; set; }
+
+        public List<string> SelectedPermissions { get; set; } = new List<string>();
+
+        public List<PermissionViewModel> Permissions { get; set; }
     }
 }

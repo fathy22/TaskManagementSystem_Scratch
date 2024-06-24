@@ -23,7 +23,7 @@ public class RolesController : Controller
 
     public async Task<IActionResult> Create()
     {
-        var viewModel = new RoleViewModel
+        var viewModel = new CreateRoleViewModel
         {
             Permissions = _rolePermissionService.GetAllPermissionsAsync().Result
                 .Select(p => new PermissionViewModel { Value = p.Value })
@@ -33,7 +33,7 @@ public class RolesController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(RoleViewModel viewModel)
+    public async Task<IActionResult> Create(CreateRoleViewModel viewModel)
     {
         if (ModelState.IsValid)
         {

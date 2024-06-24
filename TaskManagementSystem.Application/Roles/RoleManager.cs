@@ -51,7 +51,7 @@ namespace TaskManagementSystem.Application.Roles
             {
                 if (!currentClaims.Any(c => c.Type == permission))
                 {
-                    await roleManager.AddClaimAsync(adminRole, new Claim(permission, "true"));
+                    await roleManager.AddClaimAsync(adminRole, new Claim("Permission",permission));
                 }
             }
 
