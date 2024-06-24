@@ -45,6 +45,10 @@ namespace TaskManagementSystem.Mapping
             CreateMap<TeamMember, TeamMemberDto>()
           .ForMember(dest => dest.MemberName,
          opt => opt.MapFrom(src => src.Member.FirstName + src.Member.SecondName));
+
+            CreateMap<Team, TeamDto>()
+       .ForMember(dest => dest.TeamLeaderName,
+      opt => opt.MapFrom(src => src.TeamLeader.FirstName + src.TeamLeader.SecondName));
         }
     }
 }

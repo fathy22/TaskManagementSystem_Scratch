@@ -21,6 +21,7 @@ namespace TaskManagementSystem.Teams.Dto
         public string Name { get; set; }
         [Required]
         public long TeamLeaderId { get; set; }
+        public string TeamLeaderName { get; set; }
         public List<TeamMemberDto> TeamMembers { get; set; }
     }
     public class TeamShowDto

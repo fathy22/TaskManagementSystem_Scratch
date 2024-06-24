@@ -1,0 +1,32 @@
+﻿
+@model IEnumerable<TaskManagementSystem.Teams.Dto.TeamDto>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Users</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>UserName</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var team in Model)
+        {
+            <tr>
+                <td>@team.Name</td>
+                <td>@team.TeamLeaderName</td>
+                <td>
+                    <a href="@Url.Action("Edit", new { id = team.Id })">Edit</a> |
+                    <a href="@Url.Action("Delete", new { id = team.Id })">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a href="@Url.Action("Create")" class="btn btn-primary">Create New Team</a>
