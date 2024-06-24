@@ -13,6 +13,7 @@ namespace TaskManagementSystem.Teams.Dto
     [AutoMapFrom(typeof(TeamMember))]
     public class CreateTeamMemberDto
     {
-        public long MemberId { get; set; }
+        public string MemberId { get; set; }
+        public int TeamId { get; set; }
     }
 }

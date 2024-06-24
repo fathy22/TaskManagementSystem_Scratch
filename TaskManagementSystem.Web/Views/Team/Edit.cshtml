@@ -19,7 +19,7 @@
             <select asp-for="TeamLeaderId" class="form-control">
                 @foreach (var lead in teamLeaders)
                 {
-                    <option value="@lead.Id">@lead.FirstName + @lead.SecondName</option>
+                    <option value="@lead.Id">@lead.FirstName @lead.SecondName</option>
                 }
             </select>
             <span asp-validation-for="TeamLeaderId" class="text-danger"></span>
@@ -29,7 +29,7 @@
             <select asp-for="TeamMembers" class="form-control" multiple>
                 @foreach (var member in regularUsers)
                 {
-                    <option value="@member.Id">@member.FirstName + @member.SecondName</option>
+                    <option value="@member.Id">@member.FirstName @member.SecondName</option>
                 }
             </select>
             <span asp-validation-for="TeamMembers" class="text-danger"></span>

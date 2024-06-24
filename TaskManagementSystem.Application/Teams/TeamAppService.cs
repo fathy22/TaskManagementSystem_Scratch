@@ -1,5 +1,6 @@
 ﻿using Application.UnitOfWorks;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,23 +23,56 @@ namespace Application.Teams
         }
         public async Task<List<TeamDto>> GetAllTeams()
         {
-            var Teams = await _unitOfWork.GetRepository<Team>().GetAll();
-            return _mapper.Map<List<TeamDto>>(Teams);
+            var teams = await _unitOfWork.GetRepository<Team>().GetAll(query =>
+                query.Include(t => t.TeamLeader)
+                     .Include(t => t.TeamMembers)
+                     .ThenInclude(c => c.Member));
+
+            return _mapper.Map<List<TeamDto>>(teams);
         }
 
         public async Task<TeamDto> GetTeamById(int id)
         {
-            var Team = await _unitOfWork.GetRepository<Team>().GetById(id);
-            return _mapper.Map<TeamDto>(Team);
+            var teams = await _unitOfWork.GetRepository<Team>().GetAll(query =>
+                query.Include(t => t.TeamLeader)
+                     .Include(t => t.TeamMembers)
+                     .ThenInclude(c => c.Member));
+            var team = teams.FirstOrDefault(c=>c.Id==id);
+            return _mapper.Map<TeamDto>(team);
 
         }
 
-        public async Task AddTeam(CreateTeamDto Team)
+        public async Task AddTeam(CreateTeamDto team)
         {
             try
             {
-                var aut = _mapper.Map<Team>(Team);
-                await _unitOfWork.GetRepository<Team>().Add(aut);
+                var newTeam = _mapper.Map<Team>(team);
+                var addedTeam = await _unitOfWork.GetRepositoryAndSave(newTeam);
+                if (team.SelectedMembers!=null)
+                {
+                    foreach (var member in team.SelectedMembers)
+                    {
+                        await AddTeamMemebr(new CreateTeamMemberDto
+                        {
+                            MemberId=member,
+                            TeamId = addedTeam.Id
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+        }
+        private async Task AddTeamMemebr(CreateTeamMemberDto member)
+        {
+            try
+            {
+                var aut = _mapper.Map<TeamMember>(member);
+                await _unitOfWork.GetRepository<TeamMember>().Add(aut);
                 _unitOfWork.Save();
             }
             catch (Exception ex)
@@ -48,7 +82,6 @@ namespace Application.Teams
             }
 
         }
-
         public async Task UpdateTeam(TeamDto Team)
         {
             try

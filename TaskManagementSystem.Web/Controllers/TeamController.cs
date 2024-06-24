@@ -34,7 +34,7 @@ namespace TaskManagementSystem.Web.Controllers
             var regularUsers = await _userService.GetUsersByRoleAsync(StaticRoleNames.Host.RegularUsers);
             ViewBag.TeamLeaders = teamLeaders;
             ViewBag.RegularUsers = regularUsers;
-            return View(new TeamDto());
+            return View(new CreateTeamDto());
         }
 
 
@@ -47,7 +47,7 @@ namespace TaskManagementSystem.Web.Controllers
                 {
                     Name = model.Name,
                     TeamLeaderId = model.TeamLeaderId,
-                    TeamMembers = model.TeamMembers
+                    SelectedMembers = model.SelectedMembers
                 };
                 await _teamService.AddTeam(team);
                 return RedirectToAction(nameof(Index));
@@ -86,7 +86,7 @@ namespace TaskManagementSystem.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(UpdateTeamDto model)
+        public async Task<IActionResult> Edit(TeamDto model)
         {
             if (ModelState.IsValid)
             {
