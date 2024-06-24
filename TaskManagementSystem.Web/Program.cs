@@ -1,9 +1,12 @@
 using Application.Attachments;
 using Application.CustomLogs;
+using Application.R;
+using Application.Roles;
 using Application.TaskComments;
 using Application.TaskSheets;
 using Application.Teams;
 using Application.UnitOfWorks;
+using Application.Users;
 using DbContexts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +38,8 @@ builder.Services.AddScoped<ITeamAppService, TeamAppService>();
 builder.Services.AddScoped<IAttachmentAppService, AttachmentAppService>();
 builder.Services.AddScoped<ITaskSheetAppService, TaskSheetAppService>();
 builder.Services.AddScoped<ITaskCommentAppService, TaskCommentAppService>();
+builder.Services.AddScoped<IUserAppService, UserAppService>();
+builder.Services.AddScoped<IRolePermissionService, RolePermissionService>();
 builder.Services.Configure<IdentityOptions>(options =>
 {
     // Password settings

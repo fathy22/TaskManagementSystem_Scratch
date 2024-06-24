@@ -1,129 +1,141 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Application.Roles;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using TaskManagementSystem.Core.Permissions;
 using TaskManagementSystem.Web.Models;
 
+[Authorize(Roles = "Admin")] 
 public class RolesController : Controller
 {
-    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly IRolePermissionService _rolePermissionService;
 
-    public RolesController(RoleManager<IdentityRole> roleManager)
+    public RolesController(IRolePermissionService rolePermissionService)
     {
-        _roleManager = roleManager;
+        _rolePermissionService = rolePermissionService;
     }
 
-    [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View(_roleManager.Roles);
+        var roles = await _rolePermissionService.GetAllRolesAsync();
+        return View(roles);
     }
 
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
-        var permissions = GetAllPermissions();
-        var viewModel = new CreateRoleViewModel
+        var viewModel = new RoleViewModel
         {
-            Permissions = permissions.Select(p => new PermissionViewModel
-            {
-                Name = p,
-                IsSelected = false
-            }).ToList()
+            Permissions = _rolePermissionService.GetAllPermissionsAsync().Result
+                .Select(p => new PermissionViewModel { Value = p.Value })
+                .ToList()
         };
         return View(viewModel);
     }
+
     [HttpPost]
-    public async Task<IActionResult> Create(CreateRoleViewModel model)
+    public async Task<IActionResult> Create(RoleViewModel viewModel)
     {
-        var permissions = GetAllPermissions();
         if (ModelState.IsValid)
         {
-            var role = new IdentityRole(model.RoleName);
-            var result = await _roleManager.CreateAsync(role);
+            var role = new IdentityRole { Name = viewModel.Name };
+            var result = await _rolePermissionService.CreateRoleAsync(role);
+
             if (result.Succeeded)
             {
-                await UpdateRolePermissions(role, model.Permissions);
+                if (viewModel.SelectedPermissions != null)
+                {
+                    foreach (var permission in viewModel.SelectedPermissions)
+                    {
+                        await _rolePermissionService.AddPermissionToRoleAsync(role.Id, permission);
+                    }
+                }
                 return RedirectToAction("Index");
             }
+
             foreach (var error in result.Errors)
             {
-                ModelState.AddModelError(string.Empty, error.Description);
+                ModelState.AddModelError("", error.Description);
             }
         }
-        model.Permissions = permissions.Select(p => new PermissionViewModel
-        {
-            Name = p,
-            IsSelected = model.Permissions.Any(mp => mp.Name == p && mp.IsSelected) // Preserve selection
-        }).ToList();
-        return View(model);
+
+        viewModel.Permissions = _rolePermissionService.GetAllPermissionsAsync().Result
+            .Select(p => new PermissionViewModel { Value = p.Value })
+            .ToList();
+
+        return View(viewModel);
     }
-    public IActionResult Edit(string id)
+
+    public async Task<IActionResult> Edit(string id)
     {
-        var role = _roleManager.FindByIdAsync(id).Result;
+        var role = await _rolePermissionService.GetRoleByIdAsync(id);
         if (role == null)
         {
             return NotFound();
         }
-        var permissions = GetAllPermissions();
-        var model = new RoleViewModel
+
+        var viewModel = new RoleViewModel
         {
-            RoleId = role.Id,
-            RoleName = role.Name,
-            Permissions = permissions.Select(p => new PermissionViewModel
-            {
-                Name = p,
-                IsSelected = _roleManager.GetClaimsAsync(role).Result.Any(c => c.Type == "Permission" && c.Value == p)
-            }).ToList()
+            Id = role.Id,
+            Name = role.Name,
+            SelectedPermissions = (await _rolePermissionService.GetAllPermissionsByRoleIdAsync(role.Id))
+                .Select(p => p)
+                .ToList(),
+            Permissions = _rolePermissionService.GetAllPermissionsAsync().Result
+                .Select(p => new PermissionViewModel { Value = p.Value })
+                .ToList()
         };
 
-        return View(model);
+        return View(viewModel);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Edit(RoleViewModel model)
+    public async Task<IActionResult> Edit(string id, RoleViewModel viewModel)
     {
-        var role = await _roleManager.FindByIdAsync(model.RoleId);
-        if (role == null)
+        if (id != viewModel.Id)
         {
             return NotFound();
         }
 
-        role.Name = model.RoleName;
-
-        // Update permissions based on checkbox selection
-        foreach (var permission in model.Permissions)
+        if (ModelState.IsValid)
         {
-            var existingClaim = await _roleManager.GetClaimsAsync(role);
-            if (permission.IsSelected && !existingClaim.Any(c => c.Type == "Permission" && c.Value == permission.Name))
+            var role = await _rolePermissionService.GetRoleByIdAsync(id);
+            if (role == null)
             {
-                await _roleManager.AddClaimAsync(role, new Claim("Permission", permission.Name));
+                return NotFound();
             }
-            else if (!permission.IsSelected && existingClaim.Any(c => c.Type == "Permission" && c.Value == permission.Name))
+
+            role.Name = viewModel.Name;
+            var result = await _rolePermissionService.UpdateRoleAsync(role);
+
+            if (result.Succeeded)
             {
-                var claimToRemove = existingClaim.FirstOrDefault(c => c.Type == "Permission" && c.Value == permission.Name);
-                await _roleManager.RemoveClaimAsync(role, claimToRemove);
+                await _rolePermissionService.RemoveAllPermissionsByRoleAsync(role.Id);
+                if (viewModel.SelectedPermissions != null)
+                {
+                    foreach (var permission in viewModel.SelectedPermissions)
+                    {
+                        await _rolePermissionService.AddPermissionToRoleAsync(role.Id, permission);
+                    }
+                }
+                return RedirectToAction("Index");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
             }
         }
 
-        var result = await _roleManager.UpdateAsync(role);
-        if (result.Succeeded)
-        {
-            return RedirectToAction("Index");
-        }
+        viewModel.Permissions = _rolePermissionService.GetAllPermissionsAsync().Result
+            .Select(p => new PermissionViewModel { Value = p.Value })
+            .ToList();
 
-        foreach (var error in result.Errors)
-        {
-            ModelState.AddModelError(string.Empty, error.Description);
-        }
-
-        return View(model);
+        return View(viewModel);
     }
 
-    public IActionResult Delete(string id)
+    public async Task<IActionResult> Delete(string id)
     {
-        var role = _roleManager.FindByIdAsync(id).Result;
+        var role = await _rolePermissionService.GetRoleByIdAsync(id);
         if (role == null)
         {
             return NotFound();
@@ -134,40 +146,12 @@ public class RolesController : Controller
     [HttpPost, ActionName("Delete")]
     public async Task<IActionResult> DeleteConfirmed(string id)
     {
-        var role = await _roleManager.FindByIdAsync(id);
-        if (role == null)
-        {
-            return NotFound();
-        }
-
-        var result = await _roleManager.DeleteAsync(role);
+        var result = await _rolePermissionService.DeleteRoleAsync(id);
         if (result.Succeeded)
         {
             return RedirectToAction("Index");
         }
-
-        foreach (var error in result.Errors)
-        {
-            ModelState.AddModelError(string.Empty, error.Description);
-        }
-
-        return View(role);
-    }
-    private async Task UpdateRolePermissions(IdentityRole role, List<PermissionViewModel> permissions)
-    {
-        foreach (var permission in permissions)
-        {
-            if (permission.IsSelected)
-            {
-                await _roleManager.AddClaimAsync(role, new Claim("Permission", permission.Name));
-            }
-        }
-    }
-    private List<string?> GetAllPermissions()
-    {
-        return typeof(Permission).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-            .Where(fi => fi.IsLiteral && !fi.IsInitOnly && fi.FieldType == typeof(string))
-            .Select(fi => fi.GetRawConstantValue() as string)
-            .ToList();
+        TempData["ErrorMessage"] = "Role deletion failed.";
+        return RedirectToAction("Index");
     }
 }
