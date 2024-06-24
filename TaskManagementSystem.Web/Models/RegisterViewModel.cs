@@ -4,6 +4,16 @@ namespace TaskManagementSystem.Web.Models
 {
     public class RegisterViewModel
     {
+        [Required(ErrorMessage = "First Name is required.")]
+        [StringLength(50, ErrorMessage = "First Name cannot exceed 50 characters.")]
+        public string FirstName { get; set; }
+
+        [Required(ErrorMessage = "Second Name is required.")]
+        [StringLength(50, ErrorMessage = "Second Name cannot exceed 50 characters.")]
+        public string SecondName { get; set; }
+        [Required(ErrorMessage = "Username is required.")]
+        [StringLength(50, ErrorMessage = "Username cannot exceed 50 characters.")]
+        public string UserName { get; set; }
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
