@@ -49,7 +49,7 @@ namespace Application.Teams
 
         }
 
-        public async Task UpdateTeam(UpdateTeamDto Team)
+        public async Task UpdateTeam(TeamDto Team)
         {
             try
             {
@@ -84,6 +84,11 @@ namespace Application.Teams
             await _unitOfWork.GetRepository<Team>().Delete(existingTeam);
             _unitOfWork.Save();
 
+        }
+        public List<TeamMemberDto> GetTeamMembersByTeamId(int id)
+        {
+            var members = _unitOfWork.GetRepository<TeamMember>().GetAll().Result.Where(v=>v.TeamId == id).ToList();
+            return _mapper.Map<List<TeamMemberDto>>(members);
         }
     }
 }

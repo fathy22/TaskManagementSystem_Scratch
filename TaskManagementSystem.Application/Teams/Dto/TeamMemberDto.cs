@@ -8,23 +8,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TaskManagementSystem.Attachments;
+using TaskManagementSystem.Core.Entities;
 using TaskManagementSystem.Helpers.Enums;
 using TaskManagementSystem.Teams;
 
 namespace TaskManagementSystem.Teams.Dto
 {
-    [AutoMapFrom(typeof(Team))]
-    public class TeamDto
+    [AutoMapFrom(typeof(TeamMember))]
+    public class TeamMemberDto
     {
-        public int Id { get; set; }
-        [Required]
-        public string Name { get; set; }
-        [Required]
-        public long TeamLeaderId { get; set; }
-        public List<TeamMemberDto> TeamMembers { get; set; }
-    }
-    public class TeamShowDto
-    {
-        public int TeamId { get; set; }
+        public string MemberId { get; set; }
+        public string MemberName { get; set; }
     }
 }

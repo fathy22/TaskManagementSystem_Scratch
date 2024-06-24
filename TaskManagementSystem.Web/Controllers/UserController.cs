@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using TaskManagementSystem.Core.Entities;
 using TaskManagementSystem.Web.Models;
 
-namespace YourNamespace.Controllers
+namespace TaskManagementSystem.Web.Controllers
 {
     public class UserController : Controller
     {

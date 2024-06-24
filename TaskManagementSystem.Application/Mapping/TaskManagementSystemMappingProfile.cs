@@ -38,6 +38,13 @@ namespace TaskManagementSystem.Mapping
             //TaskComment
             CreateMap<CreateTaskCommentDto, TaskComment>();
             CreateMap<TaskCommentDto, TaskComment>();
+
+            //TeamMember
+            CreateMap<CreateTeamMemberDto, TeamMember>();
+            CreateMap<TeamMemberDto, TeamMember>();
+            CreateMap<TeamMember, TeamMemberDto>()
+          .ForMember(dest => dest.MemberName,
+         opt => opt.MapFrom(src => src.Member.FirstName + src.Member.SecondName));
         }
     }
 }

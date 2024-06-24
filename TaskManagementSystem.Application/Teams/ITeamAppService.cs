@@ -13,7 +13,8 @@ namespace Application.Teams
         Task<List<TeamDto>> GetAllTeams();
         Task<TeamDto> GetTeamById(int id);
         Task AddTeam(CreateTeamDto Team);
-        Task UpdateTeam(UpdateTeamDto Team);
+        Task UpdateTeam(TeamDto Team);
         Task DeleteTeam(int id);
+        List<TeamMemberDto> GetTeamMembersByTeamId(int id);
     }
 }

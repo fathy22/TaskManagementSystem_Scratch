@@ -83,6 +83,16 @@ namespace Application.Users
             var adminUser = _userManager.GetUsersInRoleAsync("Admin").Result.FirstOrDefault();
             return adminUser?.Id;
         }
+        public async Task<List<ApplicationUser>> GetUsersByRoleAsync(string roleName)
+        {
+            var role = await _roleManager.FindByNameAsync(roleName);
+            if (role == null)
+            {
+                throw new ArgumentException("Role does not exist.");
+            }
+            var usersInRole = await _userManager.GetUsersInRoleAsync(roleName);
+            return usersInRole.ToList();
+        }
 
     }
 }

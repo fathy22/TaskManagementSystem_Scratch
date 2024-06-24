@@ -18,5 +18,6 @@ namespace Application.Users
         Task<IEnumerable<IdentityRole>> GetAllRolesAsync();
         Task<IList<string>> GetUserRolesAsync(ApplicationUser user);
         string GetAdminUserId();
+        Task<List<ApplicationUser>> GetUsersByRoleAsync(string roleName);
     }
 }
