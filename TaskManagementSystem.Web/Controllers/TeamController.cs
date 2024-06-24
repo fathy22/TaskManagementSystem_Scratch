@@ -73,14 +73,15 @@ namespace TaskManagementSystem.Web.Controllers
             ViewBag.TeamLeaders = teamLeaders;
             ViewBag.RegularUsers = regularUsers;
 
-            var selectedmembers = _teamService.GetTeamMembersByTeamId(id);
+            var members = _teamService.GetTeamMembersByTeamId(id);
+            var selectedmembers = members.Select(v => v.MemberId).ToList();
 
             var model = new TeamDto
             {
                 Id = team.Id,
                 Name = team.Name,
                 TeamLeaderId = team.TeamLeaderId,
-                TeamMembers = selectedmembers.ToList()
+                SelectedMembers = selectedmembers
             };
             return View(model);
         }
@@ -98,7 +99,7 @@ namespace TaskManagementSystem.Web.Controllers
 
                 team.Name = model.Name;
                 team.TeamLeaderId = model.TeamLeaderId;
-                team.TeamMembers = model.TeamMembers;
+                team.SelectedMembers = model.SelectedMembers;
 
                  await _teamService.UpdateTeam(team);
                  return RedirectToAction(nameof(Index));

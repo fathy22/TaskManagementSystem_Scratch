@@ -22,7 +22,7 @@ namespace TaskManagementSystem.Teams.Dto
         [Required]
         public string TeamLeaderId { get; set; }
         public string? TeamLeaderName { get; set; }
-        public List<TeamMemberDto> TeamMembers { get; set; }
+        public List<string> SelectedMembers { get; set; } = new List<string>();
     }
     public class TeamShowDto
     {
