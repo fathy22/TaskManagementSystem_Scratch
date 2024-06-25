@@ -13,7 +13,7 @@ namespace Application.TaskSheets
         Task<List<TaskSheetDto>> GetAllTaskSheets();
         Task<TaskSheetDto> GetTaskSheetById(int id);
         Task AddTaskSheet(CreateTaskSheetDto TaskSheet);
-        Task UpdateTaskSheet(UpdateTaskSheetDto TaskSheet);
+        Task UpdateTaskSheet(TaskSheetDto TaskSheet);
         Task DeleteTaskSheet(int id);
     }
 }

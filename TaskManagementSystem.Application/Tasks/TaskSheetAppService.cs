@@ -50,7 +50,7 @@ namespace Application.TaskSheets
 
         }
 
-        public async Task UpdateTaskSheet(UpdateTaskSheetDto TaskSheet)
+        public async Task UpdateTaskSheet(TaskSheetDto TaskSheet)
         {
             try
             {
