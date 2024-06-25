@@ -82,20 +82,54 @@ namespace Application.Teams
             }
 
         }
-        public async Task UpdateTeam(TeamDto Team)
+        private async Task RemoveTeamMemebr(int teamId)
         {
             try
             {
-                var existingTeam = await _unitOfWork.GetRepository<Team>().GetById(Team.Id);
+                var teams = await _unitOfWork.GetRepository<Team>().GetAll(query =>
+                query.Include(t => t.TeamMembers));
+                var team = teams.FirstOrDefault(c => c.Id == teamId);
+                if (team.TeamMembers!=null && team.TeamMembers.Count>0)
+                {
+                    foreach (var memeber in team.TeamMembers)
+                    {
+                        await _unitOfWork.GetRepository<TeamMember>().Delete(memeber);
+                        _unitOfWork.Save();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+        }
+        public async Task UpdateTeam(TeamDto team)
+        {
+            try
+            {
+                var existingTeam = await _unitOfWork.GetRepository<Team>().GetById(team.Id);
 
                 if (existingTeam == null)
                 {
                     return;
                 }
-                _mapper.Map(Team, existingTeam);
+                _mapper.Map(team, existingTeam);
 
                 await _unitOfWork.GetRepository<Team>().Update(existingTeam);
-
+                await RemoveTeamMemebr(team.Id);
+                if (team.SelectedMembers != null)
+                {
+                    foreach (var member in team.SelectedMembers)
+                    {
+                        await AddTeamMemebr(new CreateTeamMemberDto
+                        {
+                            MemberId = member,
+                            TeamId = existingTeam.Id
+                        });
+                    }
+                }
                 _unitOfWork.Save();
             }
             catch (Exception ex)
