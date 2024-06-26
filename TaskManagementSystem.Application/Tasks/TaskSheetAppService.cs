@@ -1,5 +1,6 @@
 ﻿using Application.UnitOfWorks;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,8 @@ using System.Threading.Tasks;
 using TaskManagementSystem.Tasks;
 using TaskManagementSystem.TaskSheets;
 using TaskManagementSystem.TaskSheets.Dto;
+using TaskManagementSystem.Teams;
+using TaskManagementSystem.Teams.Dto;
 
 namespace Application.TaskSheets
 {
@@ -23,14 +26,25 @@ namespace Application.TaskSheets
         }
         public async Task<List<TaskSheetDto>> GetAllTaskSheets()
         {
-            var TaskSheets = await _unitOfWork.GetRepository<TaskSheet>().GetAll();
-            return _mapper.Map<List<TaskSheetDto>>(TaskSheets);
-        }
+            try
+            {
+                var TaskSheets = await _unitOfWork.GetRepository<TaskSheet>().GetAll(query =>
+                query.Include(t => t.Attachment));
+                return _mapper.Map<List<TaskSheetDto>>(TaskSheets);
+            }
+            catch (Exception ex)
+            {
 
+                throw;
+            }
+           
+        }
         public async Task<TaskSheetDto> GetTaskSheetById(int id)
         {
-            var TaskSheet = await _unitOfWork.GetRepository<TaskSheet>().GetById(id);
-            return _mapper.Map<TaskSheetDto>(TaskSheet);
+            var teams = await _unitOfWork.GetRepository<TaskSheet>().GetAll(query =>
+               query.Include(t => t.Attachment));
+            var task = teams.FirstOrDefault(c => c.Id == id);
+            return _mapper.Map<TaskSheetDto>(task);
 
         }
 

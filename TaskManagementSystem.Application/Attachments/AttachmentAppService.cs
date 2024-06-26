@@ -30,39 +30,50 @@ namespace Application.Attachments
 
         public async Task<int> UploadAttachmentAsync(IFormFile file)
         {
-            if (file == null || file.Length == 0)
+            try
             {
-                throw new UserFriendlyException("File is empty.");
-            }
-            var postedFileExtension = Path.GetExtension(file.FileName);
-            if (postedFileExtension == ".exe" || postedFileExtension == ".dll" || postedFileExtension == ".ps1" || postedFileExtension == ".js")
-            {
-                throw new Exception("not allowed files");
-            }
-            var filePath = Path.Combine("wwwroot", "attachments", file.FileName);
+                if (file == null || file.Length == 0)
+                {
+                    throw new UserFriendlyException("File is empty.");
+                }
+                var postedFileExtension = Path.GetExtension(file.FileName);
+                if (postedFileExtension == ".exe" || postedFileExtension == ".dll" || postedFileExtension == ".ps1" || postedFileExtension == ".js")
+                {
+                    throw new Exception("not allowed files");
+                }
+                var filePath = Path.Combine("wwwroot", "attachments", file.FileName);
 
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await file.CopyToAsync(stream);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                var attachment = new Attachment
+                {
+                    StoredFileName = file.FileName,
+                    ContentType = file.ContentType,
+                    Description = file.FileName,
+                    Name = file.FileName,
+                    Length = file.Length,
+                    Uri= filePath,
+                    Extension = postedFileExtension
+                };
+                //var user = await _customLogAppService.GetCurrentUserName(_abpSession.UserId.Value);
+                await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+                {
+                    Description = $" Uploaded New Attachment : {attachment.Name}"
+                });
+                await _unitOfWork.GetRepository<Attachment>().Add(attachment);
+                _unitOfWork.Save();
+
+                return attachment.Id;
             }
-
-            var attachment = new Attachment
+            catch (Exception ex)
             {
-                StoredFileName = file.FileName,
-                ContentType = file.ContentType,
-                Name = file.FileName,
-                Length = file.Length,
-                Extension= postedFileExtension
-            };
-            //var user = await _customLogAppService.GetCurrentUserName(_abpSession.UserId.Value);
-            await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
-            {
-                Description = $" Uploaded New Attachment : {attachment.Name}"
-            });
-            await _unitOfWork.GetRepository<Attachment>().Add(attachment);
-            _unitOfWork.Save();
 
-            return attachment.Id;
+                throw;
+            }
+        
         }
     }
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace TaskManagementSystem.Core.Migrations
 {
     [DbContext(typeof(TaskManagementSystemDbContext))]
-    [Migration("20240622210515_addRestOfTables")]
-    partial class addRestOfTables
+    [Migration("20240626153709_InitDb")]
+    partial class InitDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

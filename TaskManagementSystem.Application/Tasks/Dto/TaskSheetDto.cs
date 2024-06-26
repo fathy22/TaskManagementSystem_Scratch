@@ -26,12 +26,10 @@ namespace TaskManagementSystem.TaskSheets.Dto
         public DateTime DueDate { get; set; }
         public TaskSheetStatus TaskStatus { get; set; }
         public TaskPriority TaskPriority { get; set; }
-        public string UserId { get; set; }
-        public ApplicationUser User { get; set; }
+        public string? UserId { get; set; }
         public int? AttachmentId { get; set; }
-        public Attachment Attachment { get; set; }
+        public string? AttachmentName { get; set; }
         public int? TeamId { get; set; }
-        public TeamDto Team { get; set; }
         public bool IsDependentOnAnotherTask { get; set; }
         public int? DependentTaskId { get; set; }
     }

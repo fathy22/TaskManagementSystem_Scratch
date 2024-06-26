@@ -1,16 +1,16 @@
 ﻿
-@model IEnumerable<TaskManagementSystem.Teams.Dto.TeamDto>
+@model IEnumerable<TaskManagementSystem.TaskSheets.Dto.TaskSheetDto>
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h2>Teams</h2>
+<h2>Tasks</h2>
 
 <table class="table">
     <thead>
         <tr>
-            <th>Name</th>
-            <th>Team Leader Name</th>
+            <th>Title</th>
+            <th>Description</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -18,8 +18,8 @@
         @foreach (var team in Model)
         {
             <tr>
-                <td>@team.Name</td>
-                <td>@team.TeamLeaderName</td>
+                <td>@team.Title</td>
+                <td>@team.Description</td>
                 <td>
                     <a href="@Url.Action("Edit", new { id = team.Id })">Edit</a> |
                     <a href="@Url.Action("Delete", new { id = team.Id })">Delete</a>
@@ -29,4 +29,4 @@
     </tbody>
 </table>
 
-<a href="@Url.Action("Create")" class="btn btn-primary">Create New Team</a>
+<a href="@Url.Action("Create")" class="btn btn-primary">Create New Task</a>

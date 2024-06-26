@@ -1,38 +1,101 @@
-﻿@model TaskManagementSystem.Teams.Dto.TeamDto
+﻿@using TaskManagementSystem.Helpers.Enums;
+@model TaskManagementSystem.TaskSheets.Dto.TaskSheetDto
 @{
     ViewData["Title"] = "Edit";
     Layout = "~/Views/Shared/_Layout.cshtml";
-        var teamLeaders = ViewBag.TeamLeaders as IEnumerable<TaskManagementSystem.Core.Entities.ApplicationUser>;
-        var regularUsers = ViewBag.RegularUsers as IEnumerable<TaskManagementSystem.Core.Entities.ApplicationUser>;
+    var users = ViewBag.Users as IEnumerable<TaskManagementSystem.Core.Entities.ApplicationUser>;
+    var teams = ViewBag.Teams as IEnumerable<TaskManagementSystem.Teams.Dto.TeamDto>;
+    var tasks = ViewBag.Tasks as IEnumerable<TaskManagementSystem.TaskSheets.Dto.TaskSheetDto>;
+    var taskSheetStatuses = Enum.GetValues(typeof(TaskSheetStatus)).Cast<TaskSheetStatus>().ToList();
+    var TaskPriorities = Enum.GetValues(typeof(TaskPriority)).Cast<TaskPriority>().ToList();
 }
 
 <h2>Edit User</h2>
 
 <form asp-action="Edit" method="post">
-        <div class="form-group">
-            <label asp-for="Name"></label>
-            <input asp-for="Name" class="form-control" />
-            <span asp-validation-for="Name" class="text-danger"></span>
+    <input type="hidden" asp-for="AttachmentId" id="attachmentId" name="attachmentId" />
+    <div class="form-group">
+        <label asp-for="Title"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="DueDate"></label>
+        <input type="date" asp-for="DueDate" class="form-control" />
+        <span asp-validation-for="DueDate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>Task Status</label>
+        <select asp-for="TaskStatus" class="form-control">
+            <option value="">Select</option>
+            @foreach (var status in taskSheetStatuses)
+            {
+                <option value="@(Convert.ToInt32(status))">@status</option>
+            }
+        </select>
+        <span asp-validation-for="TaskStatus" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>Task Priority</label>
+        <select asp-for="TaskPriority" class="form-control">
+            <option value="">Select</option>
+            @foreach (var priority in TaskPriorities)
+            {
+                <option value="@(Convert.ToInt32(priority))">@priority</option>
+            }
+        </select>
+        <span asp-validation-for="TaskPriority" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>Users</label>
+        <select asp-for="UserId" class="form-control">
+            <option value="">Select</option>
+            @foreach (var user in users)
+            {
+                <option value="@user.Id">@user.FirstName @user.SecondName</option>
+            }
+        </select>
+        <span asp-validation-for="UserId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>Teams</label>
+        <select asp-for="TeamId" class="form-control">
+            <option value="">Select</option>
+            @foreach (var team in teams)
+            {
+                <option value="@team.Id">@team.Name</option>
+            }
+        </select>
+        <span asp-validation-for="TeamId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="IsDependentOnAnotherTask"></label>
+        <input type="checkbox" asp-for="IsDependentOnAnotherTask" id="editToggleCheckbox" onclick="toggleDependentTaskDivForEdit()" />
+    </div>
+    <div class="form-group" id="editDependentTaskDiv" style="display:none;">
+        <label>Dependent Task</label>
+        <select asp-for="DependentTaskId" class="form-control">
+            <option value="">Select</option>
+            @foreach (var task in tasks)
+            {
+                <option value="@task.Id">@task.Title</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="col-md-3 col-form-label" for="AttachmentId">Attachment</label>
+        <div class="col-md-9">
+            <input type="file" id="fileInput" style="display:none;">
+            <button type="button" id="uploadButton" style="background-color: #032f70; border-color: transparent; color: #fff;border-radius: 15px;padding: 4px 2%;">
+                Upload File
+            </button>
         </div>
-        <div class="form-group">
-            <label>TeamLeader</label>
-            <select asp-for="TeamLeaderId" class="form-control">
-                @foreach (var lead in teamLeaders)
-                {
-                    <option value="@lead.Id">@lead.FirstName @lead.SecondName</option>
-                }
-            </select>
-            <span asp-validation-for="TeamLeaderId" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label>Team Memebers</label>
-            <select asp-for="SelectedMembers" class="form-control" multiple>
-                @foreach (var member in regularUsers)
-                {
-                    <option value="@member.Id">@member.FirstName @member.SecondName</option>
-                }
-            </select>
-        <span asp-validation-for="SelectedMembers" class="text-danger"></span>
-        </div>
+        <span id="uploadedFileName" style="margin-left: 10px;">@Model.AttachmentName</span>
+    </div>
     <button type="submit" class="btn btn-primary">Edit</button>
 </form>

@@ -8,6 +8,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using TaskManagementSystem.Authorization.Roles;
 using TaskManagementSystem.Core.Entities;
+using TaskManagementSystem.Tasks;
 using TaskManagementSystem.TaskSheets.Dto;
 using TaskManagementSystem.Web.Models;
 
@@ -85,15 +86,17 @@ namespace TaskManagementSystem.Web.Controllers
             var users = await _userService.GetAllUsersAsync();
             var teams = await _teamService.GetAllTeams();
             var tasks = await _taskSheetService.GetAllTaskSheets();
+            tasks.RemoveAll(c => c.Id == id);
             ViewBag.Users = users;
             ViewBag.Teams = teams;
-            ViewBag.Tasks = teams;
+            ViewBag.Tasks = tasks;
 
             var model = new TaskSheetDto
             {
                 Id = TaskSheet.Id,
                 Title = TaskSheet.Title,
                 AttachmentId = TaskSheet.AttachmentId,
+                AttachmentName = TaskSheet.AttachmentName,
                 DependentTaskId = TaskSheet.DependentTaskId,
                 Description = TaskSheet.Description,
                 DueDate = TaskSheet.DueDate,
@@ -111,24 +114,24 @@ namespace TaskManagementSystem.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var TaskSheet = await _taskSheetService.GetTaskSheetById(model.Id);
-                if (TaskSheet == null)
+                var taskSheet = await _taskSheetService.GetTaskSheetById(model.Id);
+                if (taskSheet == null)
                 {
                     return NotFound();
                 }
 
-                TaskSheet.Title = model.Title;
-                TaskSheet.Description = model.Description;
-                TaskSheet.TaskStatus = model.TaskStatus;
-                TaskSheet.TaskPriority = model.TaskPriority;
-                TaskSheet.AttachmentId = model.AttachmentId;
-                TaskSheet.DependentTaskId = model.DependentTaskId;
-                TaskSheet.DueDate = model.DueDate;
-                TaskSheet.TeamId = model.TeamId;
-                TaskSheet.UserId = model.UserId;
-                TaskSheet.IsDependentOnAnotherTask = model.IsDependentOnAnotherTask;
+                taskSheet.Title = model.Title;
+                taskSheet.Description = model.Description;
+                taskSheet.TaskStatus = model.TaskStatus;
+                taskSheet.TaskPriority = model.TaskPriority;
+                taskSheet.AttachmentId = model.AttachmentId;
+                taskSheet.DependentTaskId = model.DependentTaskId;
+                taskSheet.DueDate = model.DueDate;
+                taskSheet.TeamId = model.TeamId;
+                taskSheet.UserId = model.UserId;
+                taskSheet.IsDependentOnAnotherTask = model.IsDependentOnAnotherTask;
 
-                 await _taskSheetService.UpdateTaskSheet(TaskSheet);
+                 await _taskSheetService.UpdateTaskSheet(taskSheet);
                  return RedirectToAction(nameof(Index));
             }
 
@@ -138,6 +141,7 @@ namespace TaskManagementSystem.Web.Controllers
             ViewBag.Users = users;
             ViewBag.Teams = teams;
             ViewBag.Tasks = tasks;
+            tasks.RemoveAll(c => c.Id == model.Id);
             return View(model);
         }
 

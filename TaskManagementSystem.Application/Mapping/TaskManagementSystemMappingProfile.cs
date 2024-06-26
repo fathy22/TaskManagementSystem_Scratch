@@ -29,6 +29,7 @@ namespace TaskManagementSystem.Mapping
             //Task
             CreateMap<CreateTaskSheetDto, TaskSheet>();
             CreateMap<TaskSheetDto, TaskSheet>();
+            CreateMap<TaskSheet, TaskSheetDto>();
 
             //CustomLog
             CreateMap<CreateCustomLogDto, CustomLog>();
@@ -49,6 +50,10 @@ namespace TaskManagementSystem.Mapping
             CreateMap<Team, TeamDto>()
        .ForMember(dest => dest.TeamLeaderName,
       opt => opt.MapFrom(src => src.TeamLeader.FirstName +" "+ src.TeamLeader.SecondName));
+
+            CreateMap<TaskSheet, TaskSheetDto>()
+    .ForMember(dest => dest.AttachmentName,
+   opt => opt.MapFrom(src => src.Attachment.Name));
         }
     }
 }
