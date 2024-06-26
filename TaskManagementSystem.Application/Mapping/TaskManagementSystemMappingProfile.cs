@@ -53,8 +53,8 @@ namespace TaskManagementSystem.Mapping
       opt => opt.MapFrom(src => src.TeamLeader.FirstName +" "+ src.TeamLeader.SecondName));
 
             CreateMap<TaskSheet, TaskSheetDto>()
-    .ForMember(dest => dest.AttachmentName,
-   opt => opt.MapFrom(src => src.Attachment.Name));
+            .ForMember(dest => dest.AttachmentName,opt => opt.MapFrom(src => src.Attachment.Name))
+            .ForMember(dest => dest.TeamName,opt => opt.MapFrom(src => src.Team.Name));
         }
     }
 }

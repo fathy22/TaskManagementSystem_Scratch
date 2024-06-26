@@ -14,6 +14,7 @@ namespace TaskManagementSystem.Core.Permissions
         public const string ManageTeams = "Teams Management";
         public const string ManageCustomLog = "Manage Log";
         public const string ManageMyTasks = "My Tasks Management";
+        public const string GanttChart = "GanttChart";
         public const string ManageTeamTasks = "Team Tasks Management";
     }
 

@@ -32,6 +32,7 @@ namespace TaskManagementSystem.TaskSheets.Dto
         public int? TeamId { get; set; }
         public bool IsDependentOnAnotherTask { get; set; }
         public int? DependentTaskId { get; set; }
+        public string? TeamName { get; set; }
     }
     public class TaskSheetShowDto
     {

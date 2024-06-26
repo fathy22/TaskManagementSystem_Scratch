@@ -11,6 +11,7 @@ using TaskManagementSystem.Authorization.Roles;
 using TaskManagementSystem.Core.Entities;
 using TaskManagementSystem.Tasks;
 using TaskManagementSystem.TaskSheets.Dto;
+using TaskManagementSystem.Teams.Dto;
 using TaskManagementSystem.Web.Models;
 
 namespace TaskManagementSystem.Web.Controllers
@@ -162,6 +163,32 @@ namespace TaskManagementSystem.Web.Controllers
         {
              await _taskSheetService.DeleteTaskSheet(id);
              return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public IActionResult GanttChart()
+        {
+            return View();
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetTasks()
+        {
+            var tasks = await _taskSheetService.GetAllTaskSheets(new TaskSheetFilterDto());
+            var result = tasks.Select(t => new TaskSheetDto
+            {
+                Id = t.Id,
+                Title = t.Title,
+                Description = t.Description,
+                DueDate = t.DueDate,
+                TaskStatus = t.TaskStatus,
+                TaskPriority = t.TaskPriority,
+                UserId = t.UserId,
+                DependentTaskId = t.DependentTaskId,
+                TeamName = t.TeamName,
+                TeamId = t.TeamId
+            }).ToList();
+
+            return Json(new { result });
         }
     }
 }

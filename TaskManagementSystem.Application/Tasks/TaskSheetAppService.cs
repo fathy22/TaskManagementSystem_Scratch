@@ -35,7 +35,7 @@ namespace Application.TaskSheets
             try
             {
                 var TaskSheets = await _unitOfWork.GetRepository<TaskSheet>().GetAll(query =>
-                query.Include(t => t.Attachment));
+                query.Include(t => t.Attachment).Include(t=>t.Team));
                 var list  =  _mapper.Map<List<TaskSheetDto>>(TaskSheets);
                 list = list
                     .WhereIf(!string.IsNullOrEmpty(input.UserId), at => at.UserId == input.UserId)
