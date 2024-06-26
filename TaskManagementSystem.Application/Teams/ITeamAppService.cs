@@ -16,5 +16,6 @@ namespace Application.Teams
         Task UpdateTeam(TeamDto Team);
         Task DeleteTeam(int id);
         List<TeamMemberDto> GetTeamMembersByTeamId(int id);
+        Task<TeamShowDto> GetTeamMembersByByTeamLeaderId(string teamLeaderId);
     }
 }

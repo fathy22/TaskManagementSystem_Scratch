@@ -38,7 +38,8 @@ namespace TaskManagementSystem.Web.Controllers
                     UserName = model.UserName,
                     Email = model.Email,
                     FirstName = model.FirstName,
-                    SecondName = model.SecondName
+                    SecondName = model.SecondName,
+                    EmailConfirmed=true
                 };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 await _userManager.AddToRoleAsync(user, StaticRoleNames.Host.RegularUsers);

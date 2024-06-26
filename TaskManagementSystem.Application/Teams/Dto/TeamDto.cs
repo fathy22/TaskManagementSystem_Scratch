@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TaskManagementSystem.Attachments;
+using TaskManagementSystem.Core.Entities;
 using TaskManagementSystem.Helpers.Enums;
 using TaskManagementSystem.Teams;
 
@@ -27,5 +28,6 @@ namespace TaskManagementSystem.Teams.Dto
     public class TeamShowDto
     {
         public int TeamId { get; set; }
+        public List<ApplicationUser> TeamMembers { get; set; }
     }
 }

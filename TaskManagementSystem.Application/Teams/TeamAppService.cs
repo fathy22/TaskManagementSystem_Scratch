@@ -1,4 +1,5 @@
-﻿using Application.UnitOfWorks;
+﻿using Abp.Domain.Repositories;
+using Application.UnitOfWorks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskManagementSystem.Core.Entities;
 using TaskManagementSystem.Teams;
 using TaskManagementSystem.Teams.Dto;
 
@@ -157,5 +159,33 @@ namespace Application.Teams
             var members = _unitOfWork.GetRepository<TeamMember>().GetAll().Result.Where(v=>v.TeamId == id).ToList();
             return _mapper.Map<List<TeamMemberDto>>(members);
         }
+        public async Task<TeamShowDto> GetTeamMembersByByTeamLeaderId(string teamLeaderId)
+        {
+            try
+            {
+                var data = new TeamShowDto();
+                var teams = await _unitOfWork.GetRepository<Team>().GetAll(query =>
+                query.Include(t => t.TeamLeader)
+                     .Include(t => t.TeamMembers)
+                     .ThenInclude(c => c.Member));
+                var team = teams.FirstOrDefault(c => c.TeamLeaderId == teamLeaderId);
+
+                data.TeamMembers = team.TeamMembers.Select(u => new ApplicationUser
+                {
+                    Id = u.MemberId,
+                    FirstName = u.Member.FirstName + u.Member.SecondName
+                }).ToList();
+                data.TeamId = team.Id;
+                return data;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+
+        }
+
     }
 }

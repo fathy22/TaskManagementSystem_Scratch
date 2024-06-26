@@ -52,6 +52,7 @@ namespace TaskManagementSystem.Web.Controllers
                     Email = model.Email,
                     FirstName = model.FirstName,
                     SecondName = model.SecondName,
+                    EmailConfirmed=true
                 };
                 var result = await _userService.AddUserAsync(user, model.Password, model.SelectedRoles);
                 if (result)
