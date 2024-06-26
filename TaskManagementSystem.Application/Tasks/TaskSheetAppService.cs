@@ -1,4 +1,5 @@
 ﻿using Abp.Collections.Extensions;
+using Application.CustomLogs;
 using Application.UnitOfWorks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskManagementSystem.Core.Sessions;
 using TaskManagementSystem.Tasks;
 using TaskManagementSystem.TaskSheets;
 using TaskManagementSystem.TaskSheets.Dto;
@@ -19,11 +21,14 @@ namespace Application.TaskSheets
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-
-        public TaskSheetAppService(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly ICustomSession _customSession;
+        private readonly ICustomLogAppService _customLogAppService;
+        public TaskSheetAppService(IUnitOfWork unitOfWork, IMapper mapper, ICustomSession customSession, ICustomLogAppService customLogAppService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _customSession = customSession;
+            _customLogAppService = customLogAppService;
         }
         public async Task<List<TaskSheetDto>> GetAllTaskSheets(TaskSheetFilterDto input)
         {
@@ -59,6 +64,11 @@ namespace Application.TaskSheets
             {
                 var aut = _mapper.Map<TaskSheet>(TaskSheet);
                 await _unitOfWork.GetRepository<TaskSheet>().Add(aut);
+                var user = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
+                await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+                {
+                    Description = $"{user.FirstName} {user.SecondName} add new task"
+                });
                 _unitOfWork.Save();
             }
             catch (Exception ex)
@@ -82,7 +92,11 @@ namespace Application.TaskSheets
                 _mapper.Map(TaskSheet, existingTaskSheet);
 
                 await _unitOfWork.GetRepository<TaskSheet>().Update(existingTaskSheet);
-
+                var user = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
+                await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+                {
+                    Description = $"{user.FirstName} {user.SecondName} update task"
+                });
                 _unitOfWork.Save();
             }
             catch (Exception ex)
@@ -101,6 +115,11 @@ namespace Application.TaskSheets
             {
                 return;
             }
+            var user = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
+            await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+            {
+                Description = $"{user.FirstName} {user.SecondName} delete task"
+            });
             await _unitOfWork.GetRepository<TaskSheet>().Delete(existingTaskSheet);
             _unitOfWork.Save();
 

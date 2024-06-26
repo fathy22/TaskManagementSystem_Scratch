@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TaskManagementSystem.Attachments;
+using TaskManagementSystem.Core.Sessions;
 using TaskManagementSystem.CustomLogs;
 using TaskManagementSystem.Tasks;
 
@@ -22,10 +23,12 @@ namespace Application.Attachments
     {
         private readonly Application.UnitOfWorks.IUnitOfWork _unitOfWork;
         private readonly ICustomLogAppService _customLogAppService;
-        public AttachmentAppService(ICustomLogAppService customLogAppService, Application.UnitOfWorks.IUnitOfWork unitOfWork)
+        private readonly ICustomSession _customSession;
+        public AttachmentAppService(ICustomLogAppService customLogAppService, Application.UnitOfWorks.IUnitOfWork unitOfWork, ICustomSession customSession)
         {
             _unitOfWork = unitOfWork;
             _customLogAppService = customLogAppService;
+            _customSession = customSession;
         }
 
         public async Task<int> UploadAttachmentAsync(IFormFile file)
@@ -58,10 +61,10 @@ namespace Application.Attachments
                     Uri= filePath,
                     Extension = postedFileExtension
                 };
-                //var user = await _customLogAppService.GetCurrentUserName(_abpSession.UserId.Value);
+                var user = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
                 await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
                 {
-                    Description = $" Uploaded New Attachment : {attachment.Name}"
+                    Description = $"{user.FirstName} {user.SecondName} Uploaded New Attachment : {attachment.Name}"
                 });
                 await _unitOfWork.GetRepository<Attachment>().Add(attachment);
                 _unitOfWork.Save();

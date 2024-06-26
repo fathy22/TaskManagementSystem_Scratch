@@ -1,4 +1,5 @@
 ﻿using Abp.Domain.Repositories;
+using Application.CustomLogs;
 using Application.UnitOfWorks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TaskManagementSystem.Core.Entities;
+using TaskManagementSystem.Core.Sessions;
 using TaskManagementSystem.Teams;
 using TaskManagementSystem.Teams.Dto;
 
@@ -17,11 +19,15 @@ namespace Application.Teams
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ICustomSession _customSession;
+        private readonly ICustomLogAppService _customLogAppService;
 
-        public TeamAppService(IUnitOfWork unitOfWork, IMapper mapper)
+        public TeamAppService(IUnitOfWork unitOfWork, IMapper mapper, ICustomLogAppService customLogAppService, ICustomSession customSession)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _customLogAppService = customLogAppService;
+            _customSession = customSession;
         }
         public async Task<List<TeamDto>> GetAllTeams()
         {
@@ -61,6 +67,12 @@ namespace Application.Teams
                         });
                     }
                 }
+                var user = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
+                await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+                {
+                    Description = $"{user.FirstName} {user.SecondName} add new team"
+                });
+                _unitOfWork.Save();
             }
             catch (Exception ex)
             {
@@ -132,6 +144,11 @@ namespace Application.Teams
                         });
                     }
                 }
+                var user = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
+                await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+                {
+                    Description = $"{user.FirstName} {user.SecondName} update task"
+                });
                 _unitOfWork.Save();
             }
             catch (Exception ex)
@@ -151,6 +168,11 @@ namespace Application.Teams
                 return;
             }
             await _unitOfWork.GetRepository<Team>().Delete(existingTeam);
+            var user = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
+            await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+            {
+                Description = $"{user.FirstName} {user.SecondName} delete team"
+            });
             _unitOfWork.Save();
 
         }
