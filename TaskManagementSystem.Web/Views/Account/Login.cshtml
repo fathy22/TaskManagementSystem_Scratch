@@ -30,3 +30,9 @@
 </form>
 <h5>Haven't Account?</h5>
 <a href="@Url.Action("Register", "Account")">Register</a>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+

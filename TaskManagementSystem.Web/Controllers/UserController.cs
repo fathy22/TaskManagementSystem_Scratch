@@ -1,4 +1,5 @@
 ﻿using Application.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using TaskManagementSystem.Web.Models;
 
 namespace TaskManagementSystem.Web.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UserController : Controller
     {
         private readonly IUserAppService _userService;
@@ -48,7 +50,7 @@ namespace TaskManagementSystem.Web.Controllers
             {
                 var user = new ApplicationUser
                 {
-                    UserName = model.UserName,
+                    UserName = model.Email,
                     Email = model.Email,
                     FirstName = model.FirstName,
                     SecondName = model.SecondName,

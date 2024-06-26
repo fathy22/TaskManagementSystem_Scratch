@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims;
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -17,30 +18,49 @@
                     <form asp-action="Logout" asp-controller="Account" method="post" class="form-inline">
                         <button type="submit" class="btn btn-link text-dark">Logout</button>
                     </form>
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Dashboard</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                            aria-expanded="false" aria-label="Toggle navigation">
+                    aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                         <ul class="navbar-nav flex-grow-1">
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">Users</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Roles" asp-action="Index">Roles</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Team" asp-action="Index">Teams</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="TaskSheet" asp-action="Index">Tasks</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="TaskSheetTeam" asp-action="Index">My Team Tasks</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="MyTaskSheet" asp-action="Index">My Tasks</a>
-                            </li>
+                            @if (User.HasClaim(c => c.Type == "Permission" && c.Value == "Users Management"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">Users</a>
+                                </li>
+                            }
+                            @if (User.HasClaim(c => c.Type == "Permission" && c.Value == "Roles Management"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Roles" asp-action="Index">Roles</a>
+                                </li>
+                            }
+                            @if (User.HasClaim(c => c.Type == "Permission" && c.Value == "Teams Management"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Team" asp-action="Index">Teams</a>
+                                </li>
+                            }
+                            @if (User.HasClaim(c => c.Type == "Permission" && c.Value == "Tasks Management"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="TaskSheet" asp-action="Index">Tasks</a>
+                                </li>
+                            }
+                            @if (User.HasClaim(c => c.Type == "Permission" && c.Value == "Team Tasks Management"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="TaskSheetTeam" asp-action="Index">My Team Tasks</a>
+                                </li>
+                            }
+                            @if (User.HasClaim(c => c.Type == "Permission" && c.Value == "My Tasks Management"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="MyTaskSheet" asp-action="Index">My Tasks</a>
+                                </li>
+                            }
                         </ul>
                     </div>
                 }

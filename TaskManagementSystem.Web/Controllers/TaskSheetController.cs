@@ -1,6 +1,7 @@
 ﻿using Application.TaskSheets;
 using Application.Teams;
 using Application.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ using TaskManagementSystem.Web.Models;
 
 namespace TaskManagementSystem.Web.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class TaskSheetController : Controller
     {
         private readonly ITaskSheetAppService _taskSheetService;

@@ -35,7 +35,7 @@ namespace TaskManagementSystem.Web.Controllers
             {
                 var user = new ApplicationUser
                 {
-                    UserName = model.UserName,
+                    UserName = model.Email,
                     Email = model.Email,
                     FirstName = model.FirstName,
                     SecondName = model.SecondName,
