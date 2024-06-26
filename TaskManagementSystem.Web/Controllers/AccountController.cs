@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using TaskManagementSystem.Authorization.Roles;
 using TaskManagementSystem.Core;
 using TaskManagementSystem.Core.Entities;
+using TaskManagementSystem.Core.Sessions;
 using TaskManagementSystem.Web.Models;
 namespace TaskManagementSystem.Web.Controllers
 {
@@ -12,11 +13,13 @@ namespace TaskManagementSystem.Web.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ICustomSession _customSession;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ICustomSession customSession)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _customSession = customSession;
         }
 
         [HttpGet]
@@ -66,7 +69,18 @@ namespace TaskManagementSystem.Web.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Index", "Home");
+                    var user = await _userManager.FindByEmailAsync(model.Email);
+                    if (user != null)
+                    {
+                        // Set UserId in session
+                        _customSession.UserId = user.Id;
+
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Invalid user details.");
+                    }
                 }
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             }

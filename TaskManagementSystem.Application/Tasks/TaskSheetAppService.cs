@@ -1,4 +1,5 @@
-﻿using Application.UnitOfWorks;
+﻿using Abp.Collections.Extensions;
+using Application.UnitOfWorks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -24,13 +25,17 @@ namespace Application.TaskSheets
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-        public async Task<List<TaskSheetDto>> GetAllTaskSheets()
+        public async Task<List<TaskSheetDto>> GetAllTaskSheets(TaskSheetFilterDto input)
         {
             try
             {
                 var TaskSheets = await _unitOfWork.GetRepository<TaskSheet>().GetAll(query =>
                 query.Include(t => t.Attachment));
-                return _mapper.Map<List<TaskSheetDto>>(TaskSheets);
+                var list  =  _mapper.Map<List<TaskSheetDto>>(TaskSheets);
+                list = list
+                    .WhereIf(!string.IsNullOrEmpty(input.UserId), at => at.UserId == input.UserId)
+                    .WhereIf(input.TeamId.HasValue, at => at.TeamId == input.TeamId).ToList();
+                return list;
             }
             catch (Exception ex)
             {

@@ -20,7 +20,10 @@ namespace TaskManagementSystem.Web.Controllers
         {
             return View();
         }
-
+        public IActionResult AccessDenied()
+        {
+            return View("~/Views/Home/AccessDenied.cshtml");
+        }
         public IActionResult Privacy()
         {
             return View();

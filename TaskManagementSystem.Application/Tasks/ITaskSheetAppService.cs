@@ -10,7 +10,7 @@ namespace Application.TaskSheets
 {
     public interface ITaskSheetAppService
     {
-        Task<List<TaskSheetDto>> GetAllTaskSheets();
+        Task<List<TaskSheetDto>> GetAllTaskSheets(TaskSheetFilterDto input);
         Task<TaskSheetDto> GetTaskSheetById(int id);
         Task AddTaskSheet(CreateTaskSheetDto TaskSheet);
         Task UpdateTaskSheet(TaskSheetDto TaskSheet);

@@ -1,6 +1,7 @@
 ﻿using Application.TaskSheets;
 using Application.Teams;
 using Application.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -8,37 +9,38 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using TaskManagementSystem.Authorization.Roles;
 using TaskManagementSystem.Core.Entities;
+using TaskManagementSystem.Core.Sessions;
 using TaskManagementSystem.Tasks;
 using TaskManagementSystem.TaskSheets.Dto;
 using TaskManagementSystem.Web.Models;
 
+
 namespace TaskManagementSystem.Web.Controllers
 {
-    public class TaskSheetController : Controller
+    [Authorize(Roles = StaticRoleNames.Host.RegularUsers + "," + StaticRoleNames.Host.TeamLeads)]
+    public class MyTaskSheetController : Controller
     {
         private readonly ITaskSheetAppService _taskSheetService;
         private readonly IUserAppService _userService;
         private readonly ITeamAppService _teamService;
+        private readonly ICustomSession _customSession;
 
-        public TaskSheetController(ITaskSheetAppService TaskSheetService, IUserAppService userService, ITeamAppService teamService)
+        public MyTaskSheetController(ITaskSheetAppService TaskSheetService, IUserAppService userService, ITeamAppService teamService, ICustomSession customSession)
         {
             _taskSheetService = TaskSheetService;
             _userService = userService;
             _teamService = teamService;
+            _customSession = customSession;
         }
 
         public async Task<IActionResult> Index()
         {
-            var TaskSheets = await _taskSheetService.GetAllTaskSheets(new TaskSheetFilterDto());
+            var TaskSheets = await _taskSheetService.GetAllTaskSheets(new TaskSheetFilterDto { UserId = _customSession.UserId});
             return View(TaskSheets);
         }
         public async Task<IActionResult> Create()
         {
-            var users = await _userService.GetAllUsersAsync();
-            var teams = await _teamService.GetAllTeams();
             var tasks = await _taskSheetService.GetAllTaskSheets(new TaskSheetFilterDto());
-            ViewBag.Users = users;
-            ViewBag.Teams = teams;
             ViewBag.Tasks = tasks;
             return View(new CreateTaskSheetDto());
         }
@@ -54,23 +56,17 @@ namespace TaskManagementSystem.Web.Controllers
                     Title = model.Title,
                     AttachmentId = model.AttachmentId,
                     DependentTaskId = model.DependentTaskId,
-                    Description=model.Description,
-                    DueDate=model.DueDate,
-                    IsDependentOnAnotherTask= model.IsDependentOnAnotherTask,
-                    TaskPriority=model.TaskPriority,
-                    TaskStatus=model.TaskStatus,
-                    TeamId=model.TeamId,
-                    UserId = model.UserId
+                    Description = model.Description,
+                    DueDate = model.DueDate,
+                    IsDependentOnAnotherTask = model.IsDependentOnAnotherTask,
+                    TaskPriority = model.TaskPriority,
+                    TaskStatus = model.TaskStatus,
+                    UserId = _customSession.UserId
                 };
                 await _taskSheetService.AddTaskSheet(TaskSheet);
                 return RedirectToAction(nameof(Index));
             }
-
-            var users = await _userService.GetAllUsersAsync();
-            var teams = await _teamService.GetAllTeams();
             var tasks = await _taskSheetService.GetAllTaskSheets(new TaskSheetFilterDto());
-            ViewBag.Users = users;
-            ViewBag.Teams = teams;
             ViewBag.Tasks = tasks;
             return View(model);
         }
@@ -103,8 +99,7 @@ namespace TaskManagementSystem.Web.Controllers
                 IsDependentOnAnotherTask = TaskSheet.IsDependentOnAnotherTask,
                 TaskPriority = TaskSheet.TaskPriority,
                 TaskStatus = TaskSheet.TaskStatus,
-                TeamId = TaskSheet.TeamId,
-                UserId = TaskSheet.UserId
+                UserId = _customSession.UserId
             };
             return View(model);
         }
@@ -127,19 +122,13 @@ namespace TaskManagementSystem.Web.Controllers
                 taskSheet.AttachmentId = model.AttachmentId;
                 taskSheet.DependentTaskId = model.DependentTaskId;
                 taskSheet.DueDate = model.DueDate;
-                taskSheet.TeamId = model.TeamId;
-                taskSheet.UserId = model.UserId;
+                taskSheet.UserId = _customSession.UserId;
                 taskSheet.IsDependentOnAnotherTask = model.IsDependentOnAnotherTask;
 
                  await _taskSheetService.UpdateTaskSheet(taskSheet);
                  return RedirectToAction(nameof(Index));
             }
-
-            var users = await _userService.GetAllUsersAsync();
-            var teams = await _teamService.GetAllTeams();
             var tasks = await _taskSheetService.GetAllTaskSheets(new TaskSheetFilterDto());
-            ViewBag.Users = users;
-            ViewBag.Teams = teams;
             ViewBag.Tasks = tasks;
             tasks.RemoveAll(c => c.Id == model.Id);
             return View(model);

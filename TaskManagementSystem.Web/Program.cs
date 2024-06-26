@@ -9,6 +9,7 @@ using Application.Users;
 using DbContexts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using TaskManagementSystem.Authorization.Roles;
 using TaskManagementSystem.Core.Entities;
 using TaskManagementSystem.Core.Sessions;
 
@@ -70,11 +71,38 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
+builder.Services.AddSession(options =>
+{
+    // Configure session options
+    options.Cookie.Name = ".TaskManagementSystem.Session";
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Adjust timeout as needed
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true; // Make the session cookie essential
+});
+
+// Add IHttpContextAccessor for accessing sessions
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AccessDenied", policy =>
+        policy.RequireAssertion(context =>
+            context.User.Identity.IsAuthenticated &&
+            !context.User.IsInRole(StaticRoleNames.Host.RegularUsers) &&
+            !context.User.IsInRole(StaticRoleNames.Host.TeamLeads)
+        )
+    );
+});
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.AccessDeniedPath = "/Home/AccessDenied"; // Specify your access denied path
+});
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
-
+app.UseSession();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
