@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace TaskManagementSystem.Core.Migrations
 {
     [DbContext(typeof(TaskManagementSystemDbContext))]
-    [Migration("20240626153709_InitDb")]
+    [Migration("20240626213906_InitDb")]
     partial class InitDb
     {
         /// <inheritdoc />
@@ -167,7 +167,6 @@ namespace TaskManagementSystem.Core.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ContentType")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreationTime")
@@ -183,7 +182,6 @@ namespace TaskManagementSystem.Core.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Extension")
@@ -211,7 +209,6 @@ namespace TaskManagementSystem.Core.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Uri")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -382,7 +379,6 @@ namespace TaskManagementSystem.Core.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("AttachmentId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreationTime")
@@ -401,7 +397,6 @@ namespace TaskManagementSystem.Core.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DueDate")
@@ -426,7 +421,6 @@ namespace TaskManagementSystem.Core.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("TeamId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -434,7 +428,6 @@ namespace TaskManagementSystem.Core.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -605,9 +598,7 @@ namespace TaskManagementSystem.Core.Migrations
                 {
                     b.HasOne("TaskManagementSystem.Attachments.Attachment", "Attachment")
                         .WithMany()
-                        .HasForeignKey("AttachmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AttachmentId");
 
                     b.HasOne("TaskManagementSystem.Tasks.TaskSheet", "DependentTask")
                         .WithMany()
@@ -615,15 +606,11 @@ namespace TaskManagementSystem.Core.Migrations
 
                     b.HasOne("TaskManagementSystem.Teams.Team", "Team")
                         .WithMany()
-                        .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TeamId");
 
                     b.HasOne("TaskManagementSystem.Core.Entities.ApplicationUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Attachment");
 

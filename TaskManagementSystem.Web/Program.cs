@@ -26,8 +26,6 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 // Register AutoMapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-// Add custom log service
-builder.Services.AddScoped<ICustomLogAppService, CustomLogAppService>();
 // Add services to the container.
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
@@ -40,6 +38,7 @@ builder.Services.AddScoped<ITaskSheetAppService, TaskSheetAppService>();
 builder.Services.AddScoped<ITaskCommentAppService, TaskCommentAppService>();
 builder.Services.AddScoped<IUserAppService, UserAppService>();
 builder.Services.AddScoped<IRolePermissionService, RolePermissionService>();
+builder.Services.AddScoped<ICustomLogAppService, CustomLogAppService>();
 builder.Services.Configure<IdentityOptions>(options =>
 {
     // Password settings

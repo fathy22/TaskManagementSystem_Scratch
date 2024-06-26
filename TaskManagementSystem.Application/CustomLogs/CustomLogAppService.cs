@@ -17,17 +17,18 @@ namespace Application.CustomLogs
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IUserAppService _userService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public CustomLogAppService(IUnitOfWork unitOfWork, IMapper mapper, IUserAppService userService)
+        public CustomLogAppService(IUnitOfWork unitOfWork, IMapper mapper, UserManager<ApplicationUser> userManager)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _userService = userService;
+            _userManager = userManager;
         }
         public async Task<List<CustomLogDto>> GetAllCustomLogs()
         {
-            var CustomLogs = await _unitOfWork.GetRepository<CustomLog>().GetAll();
+            var CustomLogs = _unitOfWork.GetRepository<CustomLog>().GetAll().Result.OrderByDescending(c=>c.Id).ToList();
+
             return _mapper.Map<List<CustomLogDto>>(CustomLogs);
         }
 
@@ -48,7 +49,7 @@ namespace Application.CustomLogs
         }
         public async Task<ApplicationUser> GetCurrentUserName(string userId)
         {
-            var user = await _userService.GetUserByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(userId);
             return user;
         }
     }

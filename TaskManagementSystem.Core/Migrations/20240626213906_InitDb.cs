@@ -58,12 +58,12 @@ namespace TaskManagementSystem.Core.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Length = table.Column<long>(type: "bigint", nullable: false),
-                    ContentType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ContentType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Extension = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Uri = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Uri = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     StoredFileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatorUserId = table.Column<long>(type: "bigint", nullable: true),
@@ -262,14 +262,12 @@ namespace TaskManagementSystem.Core.Migrations
                         name: "FK_TaskSheets_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_TaskSheets_Attachments_AttachmentId",
                         column: x => x.AttachmentId,
                         principalTable: "Attachments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_TaskSheets_TaskSheets_DependentTaskId",
                         column: x => x.DependentTaskId,
@@ -279,8 +277,7 @@ namespace TaskManagementSystem.Core.Migrations
                         name: "FK_TaskSheets_Teams_TeamId",
                         column: x => x.TeamId,
                         principalTable: "Teams",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(

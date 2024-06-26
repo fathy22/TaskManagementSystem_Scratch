@@ -60,7 +60,6 @@
                 <option value="@user.Id">@user.FirstName @user.SecondName</option>
             }
         </select>
-        <span asp-validation-for="UserId" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label>Teams</label>
@@ -71,7 +70,6 @@
                 <option value="@team.Id">@team.Name</option>
             }
         </select>
-        <span asp-validation-for="TeamId" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="IsDependentOnAnotherTask"></label>

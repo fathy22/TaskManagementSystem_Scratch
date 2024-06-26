@@ -34,7 +34,8 @@ namespace TaskManagementSystem.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var TaskSheets = await _taskSheetService.GetAllTaskSheets(new TaskSheetFilterDto());
+            var team = await _teamService.GetTeamMembersByByTeamLeaderId(_customSession.UserId);
+            var TaskSheets = await _taskSheetService.GetAllTaskSheets(new TaskSheetFilterDto { TeamId = team.TeamId});
             return View(TaskSheets);
         }
         public async Task<IActionResult> Create()

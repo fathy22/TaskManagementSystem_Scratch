@@ -18,11 +18,11 @@ namespace TaskManagementSystem.TaskSheets.Dto
     public class CreateTaskSheetDto
     {
         public string Title { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
         public DateTime DueDate { get; set; }
         public TaskSheetStatus TaskStatus { get; set; }
         public TaskPriority TaskPriority { get; set; }
-        public string UserId { get; set; }
+        public string? UserId { get; set; }
         public int? AttachmentId { get; set; }
         public int? TeamId { get; set; }
         public bool IsDependentOnAnotherTask { get; set; }

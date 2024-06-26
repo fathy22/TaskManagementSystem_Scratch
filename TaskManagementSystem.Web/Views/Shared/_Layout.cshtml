@@ -49,6 +49,12 @@
                                     <a class="nav-link text-dark" asp-area="" asp-controller="TaskSheet" asp-action="Index">Tasks</a>
                                 </li>
                             }
+                            @if (User.HasClaim(c => c.Type == "Permission" && c.Value == "Manage Log"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="CustomLog" asp-action="Index">Logs</a>
+                                </li>
+                            }
                             @if (User.HasClaim(c => c.Type == "Permission" && c.Value == "Team Tasks Management"))
                             {
                                 <li class="nav-item">

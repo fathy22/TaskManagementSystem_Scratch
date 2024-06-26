@@ -11,13 +11,13 @@ namespace TaskManagementSystem.Attachments
 {
     public class Attachment: FullAuditedEntity<int>
     {
-        public virtual string Description { get; set; }
+        public virtual string? Description { get; set; }
         public virtual string Name { get; set; }
 
         public virtual long Length { get; set; }
-        public virtual string ContentType { get; set; }
+        public virtual string? ContentType { get; set; }
         public virtual string Extension { get; set; }
-        public virtual string Uri { get; set; }
+        public virtual string? Uri { get; set; }
         public virtual string StoredFileName { get; set; }
     }
 }

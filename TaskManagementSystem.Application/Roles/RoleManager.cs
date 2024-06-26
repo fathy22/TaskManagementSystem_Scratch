@@ -45,7 +45,16 @@ namespace TaskManagementSystem.Application.Roles
                 .Where(fi => fi.IsLiteral && !fi.IsInitOnly && fi.FieldType == typeof(string))
                 .Select(fi => fi.GetRawConstantValue() as string)
                 .ToList();
-
+            if (permissionFields.Any(x => x.Contains("My Tasks Management")))
+            {
+                var per = permissionFields.FirstOrDefault(x => x.Contains("My Tasks Management"));
+                permissionFields.Remove(per);
+            }
+            if (permissionFields.Any(x => x.Contains("Team Tasks Management")))
+            {
+                var per = permissionFields.FirstOrDefault(x => x.Contains("Team Tasks Management"));
+                permissionFields.Remove(per);
+            }
             // Add new permissions to the Admin role
             foreach (var permission in permissionFields)
             {

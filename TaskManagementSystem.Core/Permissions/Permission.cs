@@ -12,6 +12,7 @@ namespace TaskManagementSystem.Core.Permissions
         public const string ManageRoles = "Roles Management";
         public const string ManageTasks = "Tasks Management";
         public const string ManageTeams = "Teams Management";
+        public const string ManageCustomLog = "Manage Log";
         public const string ManageMyTasks = "My Tasks Management";
         public const string ManageTeamTasks = "Team Tasks Management";
     }

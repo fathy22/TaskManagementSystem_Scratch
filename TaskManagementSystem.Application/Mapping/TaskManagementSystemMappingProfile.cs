@@ -34,6 +34,7 @@ namespace TaskManagementSystem.Mapping
             //CustomLog
             CreateMap<CreateCustomLogDto, CustomLog>();
             CreateMap<CustomLogDto, CustomLog>();
+            CreateMap<CustomLog, CustomLogDto>();
 
 
             //TaskComment

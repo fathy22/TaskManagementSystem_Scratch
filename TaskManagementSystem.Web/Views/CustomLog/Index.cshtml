@@ -1,0 +1,23 @@
+﻿
+@model IEnumerable<TaskManagementSystem.CustomLogs.Dto.CustomLogDto>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Teams</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var log in Model)
+        {
+            <tr>
+                <td>@log.Description</td>
+            </tr>
+        }
+    </tbody>
+</table>
