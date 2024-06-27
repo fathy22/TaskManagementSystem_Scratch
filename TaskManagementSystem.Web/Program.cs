@@ -60,7 +60,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.HttpOnly = true;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(0);
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
     options.LoginPath = "/Account/Login";
     options.AccessDeniedPath = "/Account/AccessDenied";
     options.SlidingExpiration = true;
@@ -69,10 +69,12 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddSession(options =>
 {
     options.Cookie.Name = ".TaskManagementSystem.Session";
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Adjust timeout as needed
     options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
+    options.Cookie.IsEssential = true; // Make the session cookie essential
 });
+
+// Add IHttpContextAccessor for accessing sessions
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorization(options =>
 {
@@ -87,7 +89,7 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.AccessDeniedPath = "/Home/AccessDenied";
+    options.AccessDeniedPath = "/Home/AccessDenied"; // Specify your access denied path
 });
 
 builder.Services.AddControllersWithViews();
@@ -95,6 +97,7 @@ builder.Services.AddRazorPages();
 
 var app = builder.Build();
 app.UseSession();
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
