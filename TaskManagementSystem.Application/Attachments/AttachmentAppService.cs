@@ -61,11 +61,14 @@ namespace Application.Attachments
                     Uri= filePath,
                     Extension = postedFileExtension
                 };
-                var user = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
-                await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+                if (_customSession.UserId != null)
                 {
-                    Description = $"{user.FirstName} {user.SecondName} Uploaded New Attachment : {attachment.Name}"
-                });
+                    var user = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
+                    await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+                    {
+                        Description = $"{user.FirstName} {user.SecondName} Uploaded New Attachment : {attachment.Name}"
+                    });
+                }
                 await _unitOfWork.GetRepository<Attachment>().Add(attachment);
                 _unitOfWork.Save();
 

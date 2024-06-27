@@ -40,11 +40,14 @@ namespace Application.TaskComments
             {
                 var aut = _mapper.Map<TaskComment>(TaskComment);
                 await _unitOfWork.GetRepository<TaskComment>().Add(aut);
-                var user = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
-                await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+                if (_customSession.UserId != null)
                 {
-                    Description = $"{user.FirstName} {user.SecondName} add new comment"
-                });
+                    var user = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
+                    await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+                    {
+                        Description = $"{user.FirstName} {user.SecondName} add new comment"
+                    });
+                }
                 _unitOfWork.Save();
             }
             catch (Exception ex)

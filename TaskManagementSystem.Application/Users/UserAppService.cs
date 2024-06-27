@@ -40,11 +40,14 @@ namespace Application.Users
             if (result.Succeeded)
             {
                 result = await _userManager.AddToRolesAsync(user, roles);
-                var usr = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
-                await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+                if (_customSession.UserId != null)
                 {
-                    Description = $"{usr.FirstName} {usr.SecondName} add new user"
-                });
+                    var usr = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
+                    await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+                    {
+                        Description = $"{usr.FirstName} {usr.SecondName} add new user"
+                    });
+                }
             }
             return result.Succeeded;
         }
@@ -56,7 +59,8 @@ namespace Application.Users
 
             existingUser.UserName = user.UserName;
             existingUser.Email = user.Email;
-            // Update other fields as necessary
+            existingUser.FirstName = user.FirstName;
+            existingUser.SecondName = user.SecondName;
 
             var result = await _userManager.UpdateAsync(existingUser);
             if (result.Succeeded)
@@ -67,11 +71,14 @@ namespace Application.Users
                 {
                     result = await _userManager.AddToRolesAsync(existingUser, roles);
                 }
-                var usr = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
-                await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+                if (_customSession.UserId != null)
                 {
-                    Description = $"{usr.FirstName} {usr.SecondName} update user"
-                });
+                    var usr = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
+                    await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+                    {
+                        Description = $"{usr.FirstName} {usr.SecondName} update user"
+                    });
+                }
             }
             return result.Succeeded;
         }
@@ -82,11 +89,14 @@ namespace Application.Users
             if (user == null) return false;
 
             var result = await _userManager.DeleteAsync(user);
-            var usr = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
-            await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+            if (_customSession.UserId != null)
             {
-                Description = $"{usr.FirstName} {usr.SecondName} delete user"
-            });
+                var usr = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
+                await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+                {
+                    Description = $"{usr.FirstName} {usr.SecondName} delete user"
+                });
+            }
             return result.Succeeded;
         }
 

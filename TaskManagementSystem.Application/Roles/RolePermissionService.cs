@@ -40,11 +40,14 @@ namespace Application.Roles
 
         public async Task<IdentityResult> CreateRoleAsync(IdentityRole role)
         {
-            var user = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
-            await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+            if (_customSession.UserId != null)
             {
-                Description = $"{user.FirstName} {user.SecondName} create New role"
-            });
+                var user = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
+                await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+                {
+                    Description = $"{user.FirstName} {user.SecondName} create New role"
+                });
+            }
             return await _roleManager.CreateAsync(role);
         }
 
@@ -52,22 +55,28 @@ namespace Application.Roles
         {
             var existingRole = await _roleManager.FindByIdAsync(role.Id);
             existingRole.Name = role.Name;
-            var user = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
-            await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+            if (_customSession.UserId != null)
             {
-                Description = $"{user.FirstName} {user.SecondName} update role"
-            });
+                var user = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
+                await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+                {
+                    Description = $"{user.FirstName} {user.SecondName} update role"
+                });
+            }
             return await _roleManager.UpdateAsync(existingRole);
         }
 
         public async Task<IdentityResult> DeleteRoleAsync(string roleId)
         {
             var role = await _roleManager.FindByIdAsync(roleId);
-            var user = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
-            await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+            if (_customSession.UserId != null)
             {
-                Description = $"{user.FirstName} {user.SecondName} delete role"
-            });
+                var user = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
+                await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+                {
+                    Description = $"{user.FirstName} {user.SecondName} delete role"
+                });
+            }
             return await _roleManager.DeleteAsync(role);
         }
 

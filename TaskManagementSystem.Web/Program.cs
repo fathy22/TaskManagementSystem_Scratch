@@ -1,5 +1,6 @@
 using Application.Attachments;
 using Application.CustomLogs;
+using Application.DashboardReports;
 using Application.Roles;
 using Application.TaskComments;
 using Application.TaskSheets;
@@ -15,18 +16,13 @@ using TaskManagementSystem.Core.Sessions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddDbContext<TaskManagementSystemDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<TaskManagementSystemDbContext>()
     .AddDefaultTokenProviders();
-
-// Register AutoMapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-// Add services to the container.
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
 builder.Services.AddScoped<ICustomSession, CustomSession>();
@@ -39,6 +35,7 @@ builder.Services.AddScoped<ITaskCommentAppService, TaskCommentAppService>();
 builder.Services.AddScoped<IUserAppService, UserAppService>();
 builder.Services.AddScoped<IRolePermissionService, RolePermissionService>();
 builder.Services.AddScoped<ICustomLogAppService, CustomLogAppService>();
+builder.Services.AddScoped<IDashboardReportAppService, DashboardReportAppService>();
 builder.Services.Configure<IdentityOptions>(options =>
 {
     // Password settings
@@ -62,9 +59,8 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    // Cookie settings
     options.Cookie.HttpOnly = true;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(0);
     options.LoginPath = "/Account/Login";
     options.AccessDeniedPath = "/Account/AccessDenied";
     options.SlidingExpiration = true;
@@ -72,14 +68,11 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddSession(options =>
 {
-    // Configure session options
     options.Cookie.Name = ".TaskManagementSystem.Session";
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // Adjust timeout as needed
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true; // Make the session cookie essential
+    options.Cookie.IsEssential = true;
 });
-
-// Add IHttpContextAccessor for accessing sessions
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorization(options =>
 {
@@ -94,7 +87,7 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.AccessDeniedPath = "/Home/AccessDenied"; // Specify your access denied path
+    options.AccessDeniedPath = "/Home/AccessDenied";
 });
 
 builder.Services.AddControllersWithViews();
@@ -102,7 +95,6 @@ builder.Services.AddRazorPages();
 
 var app = builder.Build();
 app.UseSession();
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();

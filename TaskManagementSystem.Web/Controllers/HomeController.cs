@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Application.CustomLogs;
+using Application.DashboardReports;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using TaskManagementSystem.Core.Permissions;
@@ -10,15 +12,23 @@ namespace TaskManagementSystem.Web.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly IDashboardReportAppService _dashboardReportAppService;
+        public HomeController(ILogger<HomeController> logger, IDashboardReportAppService dashboardReportAppService)
         {
             _logger = logger;
+            _dashboardReportAppService = dashboardReportAppService;
         }
 
-        public IActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            return View();
+            var counts = _dashboardReportAppService.GetDashboardCards();
+            var userTasks = await _dashboardReportAppService.GetTopFiveUsersHaveTasks();
+            var model = new DashboardViewModel
+            {
+                Report = counts,
+                TopFiveUsers = userTasks
+            };
+            return View(model);
         }
         public IActionResult AccessDenied()
         {

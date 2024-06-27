@@ -67,11 +67,14 @@ namespace Application.Teams
                         });
                     }
                 }
-                var user = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
-                await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+                if (_customSession.UserId != null)
                 {
-                    Description = $"{user.FirstName} {user.SecondName} add new team"
-                });
+                    var user = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
+                    await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+                    {
+                        Description = $"{user.FirstName} {user.SecondName} add new team"
+                    });
+                }
                 _unitOfWork.Save();
             }
             catch (Exception ex)
@@ -144,11 +147,14 @@ namespace Application.Teams
                         });
                     }
                 }
-                var user = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
-                await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+                if (_customSession.UserId != null)
                 {
-                    Description = $"{user.FirstName} {user.SecondName} update task"
-                });
+                    var user = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
+                    await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+                    {
+                        Description = $"{user.FirstName} {user.SecondName} update task"
+                    });
+                }
                 _unitOfWork.Save();
             }
             catch (Exception ex)
@@ -168,11 +174,14 @@ namespace Application.Teams
                 return;
             }
             await _unitOfWork.GetRepository<Team>().Delete(existingTeam);
-            var user = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
-            await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+            if (_customSession.UserId != null)
             {
-                Description = $"{user.FirstName} {user.SecondName} delete team"
-            });
+                var user = await _customLogAppService.GetCurrentUserName(_customSession.UserId);
+                await _customLogAppService.AddCustomLog(new TaskManagementSystem.CustomLogs.Dto.CreateCustomLogDto
+                {
+                    Description = $"{user.FirstName} {user.SecondName} delete team"
+                });
+            }
             _unitOfWork.Save();
 
         }
