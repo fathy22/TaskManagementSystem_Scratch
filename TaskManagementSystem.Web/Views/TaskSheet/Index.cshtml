@@ -15,14 +15,15 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var team in Model)
+        @foreach (var task in Model)
         {
             <tr>
-                <td>@team.Title</td>
-                <td>@team.Description</td>
+                <td>@task.Title</td>
+                <td>@task.Description</td>
                 <td>
-                    <a href="@Url.Action("Edit", new { id = team.Id })">Edit</a> |
-                    <a href="@Url.Action("Delete", new { id = team.Id })">Delete</a>
+                    <a href="@Url.Action("Edit", new { id = task.Id })">Edit</a> |
+                    <a href="@Url.Action("AddComment", new { id = task.Id })">Add Comment</a> |
+                    <a href="@Url.Action("Delete", new { id = task.Id })">Delete</a>
                 </td>
             </tr>
         }

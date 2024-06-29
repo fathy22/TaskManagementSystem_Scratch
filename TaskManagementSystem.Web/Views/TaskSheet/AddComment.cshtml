@@ -1,0 +1,24 @@
+﻿@using TaskManagementSystem.Helpers.Enums;
+@model TaskManagementSystem.TaskComments.Dto.TaskCommentDto
+@{
+    ViewData["Title"] = "Create Task";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Add Comment</h2>
+
+<form asp-action="AddComment" method="post">
+    <input type="hidden" asp-for="TaskSheetId" />
+    <div class="form-group">
+        <label asp-for="Comment"></label>
+        <input asp-for="Comment" class="form-control" />
+        <span asp-validation-for="Comment" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

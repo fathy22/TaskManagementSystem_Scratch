@@ -1,4 +1,6 @@
-﻿using Application.TaskSheets;
+﻿using Application.TaskComments;
+using Application.TaskComments.Dto;
+using Application.TaskSheets;
 using Application.Teams;
 using Application.Users;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +11,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using TaskManagementSystem.Authorization.Roles;
 using TaskManagementSystem.Core.Entities;
+using TaskManagementSystem.TaskComments.Dto;
 using TaskManagementSystem.Tasks;
 using TaskManagementSystem.TaskSheets.Dto;
 using TaskManagementSystem.Teams.Dto;
@@ -22,12 +25,14 @@ namespace TaskManagementSystem.Web.Controllers
         private readonly ITaskSheetAppService _taskSheetService;
         private readonly IUserAppService _userService;
         private readonly ITeamAppService _teamService;
+        private readonly ITaskCommentAppService _taskCommentAppService;
 
-        public TaskSheetController(ITaskSheetAppService TaskSheetService, IUserAppService userService, ITeamAppService teamService)
+        public TaskSheetController(ITaskSheetAppService TaskSheetService, IUserAppService userService, ITeamAppService teamService, ITaskCommentAppService taskCommentAppService)
         {
             _taskSheetService = TaskSheetService;
             _userService = userService;
             _teamService = teamService;
+            _taskCommentAppService = taskCommentAppService;
         }
 
         public async Task<IActionResult> Index()
@@ -189,6 +194,35 @@ namespace TaskManagementSystem.Web.Controllers
             }).ToList();
 
             return Json(new { result });
+        }
+        public async Task<IActionResult> AddComment(int id)
+        {
+            var TaskSheet = await _taskSheetService.GetTaskSheetById(id);
+            if (TaskSheet == null)
+            {
+                return NotFound();
+            }
+            var model = new TaskCommentDto
+            {
+                TaskSheetId = TaskSheet.Id,
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddComment(CreateTaskCommentDto model)
+        {
+            if (ModelState.IsValid)
+            {
+                var commemt = new CreateTaskCommentDto
+                {
+                    TaskSheetId = model.TaskSheetId,
+                    Comment = model.Comment
+                };
+                await _taskCommentAppService.AddTaskComment(commemt);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(model);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Application.TaskSheets;
+﻿using Application.TaskComments;
+using Application.TaskComments.Dto;
+using Application.TaskSheets;
 using Application.Teams;
 using Application.Users;
 using Microsoft.AspNetCore.Authorization;
@@ -10,8 +12,10 @@ using System.Threading.Tasks;
 using TaskManagementSystem.Authorization.Roles;
 using TaskManagementSystem.Core.Entities;
 using TaskManagementSystem.Core.Sessions;
+using TaskManagementSystem.TaskComments.Dto;
 using TaskManagementSystem.Tasks;
 using TaskManagementSystem.TaskSheets.Dto;
+using TaskManagementSystem.Teams;
 using TaskManagementSystem.Web.Models;
 
 namespace TaskManagementSystem.Web.Controllers
@@ -20,16 +24,18 @@ namespace TaskManagementSystem.Web.Controllers
     public class TaskSheetTeamController : Controller
     {
         private readonly ITaskSheetAppService _taskSheetService;
+        private readonly ITaskCommentAppService _taskCommentAppService;
         private readonly IUserAppService _userService;
         private readonly ITeamAppService _teamService;
         private readonly ICustomSession _customSession;
 
-        public TaskSheetTeamController(ITaskSheetAppService TaskSheetService, IUserAppService userService, ITeamAppService teamService, ICustomSession customSession)
+        public TaskSheetTeamController(ITaskSheetAppService TaskSheetService, IUserAppService userService, ITeamAppService teamService, ICustomSession customSession, ITaskCommentAppService taskCommentAppService)
         {
             _taskSheetService = TaskSheetService;
             _userService = userService;
             _teamService = teamService;
             _customSession = customSession;
+            _taskCommentAppService = taskCommentAppService;
         }
 
         public async Task<IActionResult> Index()
@@ -138,6 +144,37 @@ namespace TaskManagementSystem.Web.Controllers
                  await _taskSheetService.UpdateTaskSheet(taskSheet);
                  return RedirectToAction(nameof(Index));
             }
+            return View(model);
+        }
+
+        public async Task<IActionResult> AddComment(int id)
+        {
+            var TaskSheet = await _taskSheetService.GetTaskSheetById(id);
+            if (TaskSheet == null)
+            {
+                return NotFound();
+            }
+            var model = new TaskCommentDto
+            {
+                TaskSheetId = TaskSheet.Id,
+                Comment = TaskSheet.Title,
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddComment(TaskCommentDto model)
+        {
+                if (ModelState.IsValid)
+                {
+                    var commemt = new CreateTaskCommentDto
+                    {
+                        TaskSheetId = model.TaskSheetId,
+                        Comment = model.Comment
+                    };
+                    await _taskCommentAppService.AddTaskComment(commemt);
+                    return RedirectToAction(nameof(Index));
+                }
             return View(model);
         }
 

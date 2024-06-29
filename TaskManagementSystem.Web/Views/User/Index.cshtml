@@ -8,7 +8,7 @@
 <table class="table">
     <thead>
         <tr>
-            <th>UserName</th>
+            <th>Full Name</th>
             <th>Email</th>
             <th>Actions</th>
         </tr>
@@ -17,7 +17,7 @@
         @foreach (var user in Model.Users)
         {
             <tr>
-                <td>@user.UserName</td>
+                <td>@user.FirstName @user.SecondName</td>
                 <td>@user.Email</td>
                 <td>
                     <a href="@Url.Action("Edit", new { id = user.Id })">Edit</a> |
